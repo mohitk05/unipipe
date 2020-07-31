@@ -1,4 +1,5 @@
 import { NodeType, InPinType, OutPinType } from './../context/main';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
 export type BoardActions =
 	| {
 			type: 'CREATE_NODE';
@@ -38,5 +39,33 @@ export type BoardActions =
 			data: {
 				input: string;
 				output: string;
+			};
+	  }
+	| {
+			type: 'UPDATE_INPUT_PIN_COORDINATES';
+			data: {
+				id: string;
+				coordinates: {
+					x: number;
+					y: number;
+					z?: number;
+				};
+			};
+	  }
+	| {
+			type: 'UPDATE_OUTPUT_PIN_COORDINATES';
+			data: {
+				id: string;
+				coordinates: {
+					x: number;
+					y: number;
+					z?: number;
+				};
+			};
+	  }
+	| {
+			type: 'SET_ENGINE';
+			data: {
+				engine: null | DiagramEngine;
 			};
 	  };

@@ -1,32 +1,21 @@
 import React, { useContext } from 'react';
-import Node from './../Node';
 import { MainContext } from '../../context/main';
-import { useDrop, DropTargetMonitor } from 'react-dnd';
-import { execute } from '../../executor';
+import './index.css';
+import {
+    CanvasWidget
+} from '@projectstorm/react-canvas-core';
+import { parseAndExecute } from '../../executor/v2';
 
 const Board = () => {
-    const { state: { board: { nodes, inputPins, outputPins, headNode } } } = useContext(MainContext);
-
-    const onDrop = (item: { id: string, type: string }, monitor: DropTargetMonitor) => {
-        return {
-            delta: monitor.getDifferenceFromInitialOffset()
-        }
-    }
-
-    const [collectedProps, drop] = useDrop({
-        accept: 'node',
-        drop: onDrop
-    })
+    const { state: { board: { engine } } } = useContext(MainContext);
 
     const executeBoard = () => {
-        execute(nodes || [], inputPins || {}, outputPins || {}, headNode || '');
+        engine && parseAndExecute(engine)
     }
 
     return (
-        <div ref={drop} style={styles.board}>
-            {nodes && nodes.map(node => {
-                return <Node key={node.id} data={node} />
-            })}
+        <div style={styles.board}>
+            {engine && <CanvasWidget engine={engine} className="main-canvas" />}
             <div style={styles.executeMenu}>
                 <button onClick={executeBoard}>Execute</button>
             </div>
@@ -37,7 +26,8 @@ const Board = () => {
 const styles: { [key: string]: React.CSSProperties } = {
     board: {
         padding: 16,
-        width: '100%'
+        width: '100%',
+        position: 'relative'
     },
     executeMenu: {
         top: 20,

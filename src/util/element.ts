@@ -5,6 +5,7 @@ export type ElementType = {
 	id: string;
 	type: string;
 	name: string;
+	color: string;
 	description?: string;
 	processor?: string;
 	pinMapping: InputOutput;
@@ -94,22 +95,26 @@ export const elements: {
 	processor?: string;
 	pinMapping: InputOutput;
 	initialData?: any;
+	color: string;
 }[] = [
 	{
 		type: 'add',
 		name: 'Add',
+		color: 'coral',
 		processor: getProcessor('add'),
 		pinMapping: pinMapping['add'],
 	},
 	{
 		type: 'square',
 		name: 'Square',
+		color: 'blue',
 		processor: getProcessor('square'),
 		pinMapping: pinMapping['square'],
 	},
 	{
 		type: 'constant',
 		name: 'Constant',
+		color: 'pink',
 		initialData: {
 			value: 4,
 		},
@@ -118,12 +123,14 @@ export const elements: {
 	{
 		type: 'sink',
 		name: 'Console',
+		color: 'yellow',
 		processor: getProcessor('console'),
 		pinMapping: pinMapping['console'],
 	},
 	{
 		type: 'sink',
 		name: 'Display',
+		color: 'teal',
 		processor: getProcessor('display'),
 		pinMapping: pinMapping['display'],
 	},

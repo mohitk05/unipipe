@@ -5,6 +5,10 @@ import cloneDeep from 'lodash/cloneDeep';
 export const boardReducer = (state: BoardState, action: BoardActions) => {
 	let stateClone: BoardState;
 	switch (action.type) {
+		case 'SET_ENGINE':
+			stateClone = cloneDeep(state);
+			stateClone.engine = action.data.engine;
+			return stateClone;
 		case 'CREATE_NODE':
 			stateClone = cloneDeep(state);
 			if (!state.nodes?.length) {
@@ -41,6 +45,18 @@ export const boardReducer = (state: BoardState, action: BoardActions) => {
 		case 'RESET_SELECTED_PIN':
 			stateClone = cloneDeep(state);
 			delete stateClone.selectedPin;
+			return stateClone;
+		case 'UPDATE_INPUT_PIN_COORDINATES':
+			stateClone = cloneDeep(state);
+			stateClone.inputPins &&
+				(stateClone.inputPins[action.data.id].coordinates =
+					action.data.coordinates);
+			return stateClone;
+		case 'UPDATE_OUTPUT_PIN_COORDINATES':
+			stateClone = cloneDeep(state);
+			stateClone.outputPins &&
+				(stateClone.outputPins[action.data.id].coordinates =
+					action.data.coordinates);
 			return stateClone;
 		default:
 			return state;

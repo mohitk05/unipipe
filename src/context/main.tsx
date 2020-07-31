@@ -1,4 +1,5 @@
 import React, { createContext } from 'react';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
 
 // export type PinType = {
 //     id: string;
@@ -15,6 +16,11 @@ export type InPinType = {
     type: "in";
     name: string;
     label: string;
+    coordinates?: {
+        x: number;
+        y: number;
+        z?: number;
+    };
 }
 
 export type OutPinType = {
@@ -23,7 +29,12 @@ export type OutPinType = {
     type: "out";
     label: string;
     name: string;
-    refs: string[]
+    refs: string[];
+    coordinates?: {
+        x: number;
+        y: number;
+        z?: number;
+    };
 }
 
 export type NodeType = {
@@ -35,6 +46,7 @@ export type NodeType = {
 }
 
 export type BoardState = {
+    engine: DiagramEngine | null;
     nodes?: NodeType[];
     inputPins?: {
         [key: string]: InPinType
@@ -52,6 +64,7 @@ export type StoreStateType = {
 
 export const initialState: StoreStateType = {
     board: {
+        engine: null,
         nodes: [],
         inputPins: {},
         outputPins: {}

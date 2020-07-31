@@ -1,35 +1,31 @@
 import React, { useContext } from 'react';
 import { MainContext } from '../../context/main';
-import { createNode } from './../../util/node';
-import { ElementType } from './../../util/element';
+import { ElementType, getElement } from './../../util/element';
+import { DefaultNodeModel } from '@projectstorm/react-diagrams';
 
 interface ElementProps {
     data: ElementType
 }
 
 const Element = ({ data }: ElementProps) => {
-    const { dispatch } = useContext(MainContext);
+    const { state: { board: { engine } } } = useContext(MainContext);
 
     const addElementToBoard = () => {
-        let { node, inputPins, outputPins } = createNode(data.id)
-        dispatch({
-            type: 'CREATE_NODE',
-            data: {
-                node
+        const model = engine?.getModel();
+        const node = new DefaultNodeModel({
+            name: data.type,
+            color: data.color,
+            extras: {
+                type: data.id
             }
-        })
-        dispatch({
-            type: 'ADD_INPUT_PINS',
-            data: {
-                pins: inputPins
-            }
-        })
-        dispatch({
-            type: 'ADD_OUTPUT_PINS',
-            data: {
-                pins: outputPins
-            }
-        })
+        });
+        node.setPosition(0, 0);
+
+        addPorts(data.id, node);
+
+        model?.addNode(node);
+        engine?.repaintCanvas();
+        localStorage.setItem('unipipe_model', JSON.stringify(model?.serialize()));
     }
 
     return (
@@ -51,3 +47,14 @@ const styles = {
 }
 
 export default Element;
+
+const addPorts = (elementId: string, node: DefaultNodeModel) => {
+    const element = getElement(elementId);
+    element.pinMapping.inputs.forEach(input => {
+        node.addInPort(input.label);
+    })
+
+    element.pinMapping.outputs.forEach(output => {
+        node.addOutPort(output.label);
+    })
+}
