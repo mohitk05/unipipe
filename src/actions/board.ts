@@ -39,4 +39,28 @@ export type BoardActions =
 				input: string;
 				output: string;
 			};
+	  }
+	| {
+			type: 'UPDATE_INPUT_PIN_POSITION';
+			data: {
+				pin: string;
+				x: number;
+				y: number;
+			};
+	  }
+	| {
+			type: 'UPDATE_OUTPUT_PIN_POSITION';
+			data: {
+				pin: string;
+				x: number;
+				y: number;
+			};
+	  }
+	| {
+			type: 'UPDATE_NODE_POSITION';
+			data: {
+				node: string;
+				x: number;
+				y: number;
+			};
 	  };

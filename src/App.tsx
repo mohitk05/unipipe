@@ -5,7 +5,8 @@ import { MainContext, initialState } from './context/main';
 import { main } from './reducers';
 
 const App: React.FC = () => {
-  const [state, dispatch] = useReducer(main, initialState);
+  const storedState = localStorage.getItem('store_state');
+  const [state, dispatch] = useReducer(main, (storedState && JSON.parse(storedState)) || initialState);
   return (
     <div className="App">
       <MainContext.Provider value={{ state, dispatch }}>

@@ -129,22 +129,40 @@ export const elements: {
 	},
 ];
 
-const elementMap: { [key: string]: ElementType } = {};
+const init = (): { [id: string]: ElementType } => {
+	const elementMap: { [key: string]: ElementType } = {};
 
-elements.forEach((el) => {
-	let id = uuidv4();
-	elementMap[id] = {
-		id,
-		...el,
-	};
-});
+	elements.forEach((el) => {
+		let id = uuidv4();
+		elementMap[id] = {
+			id,
+			...el,
+		};
+	});
 
-export const getAllElements = () => {
+	localStorage.setItem('elements', JSON.stringify(elementMap));
+
 	return elementMap;
 };
 
-export const getElement = (type: string) => {
-	return elementMap[type];
+export const getAllElements = (): { [id: string]: ElementType } => {
+	const elements = localStorage.getItem('elements');
+	if (elements) {
+		return JSON.parse(elements);
+	} else {
+		const elementMap = init();
+		return elementMap;
+	}
+};
+
+export const getElement = (type: string): ElementType => {
+	const elements = localStorage.getItem('elements');
+	if (elements) {
+		return JSON.parse(elements)[type];
+	} else {
+		const elementMap = init();
+		return elementMap[type];
+	}
 };
 
 export const getElementProcessor = (type: string) => {

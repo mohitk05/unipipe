@@ -1,7 +1,6 @@
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import Pin from './../Pin';
-import { NodeType } from '../../context/main';
-import { useDrag, DragSourceMonitor } from 'react-dnd'
+import { NodeType, MainContext } from '../../context/main';
 import './index.css';
 import { getElement } from '../../util/element';
 
@@ -10,46 +9,63 @@ type NodeProps = {
 }
 
 const Node = ({ data }: NodeProps) => {
-    const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+    const [coordinates, setCoordinates] = useState(data.position || { x: 170, y: 20 });
+    const { dispatch } = useContext(MainContext);
+    const nodeRef = useRef<HTMLDivElement>(null);
+    const mousePosRef = useRef({ x: 0, y: 0 });
 
-    const onEnd = (item: { id: string, type: string } | undefined, monitor: DragSourceMonitor) => {
-        if (monitor.didDrop()) {
-            const delta = monitor.getDropResult().delta
-            if (delta) {
-                let left = Math.round(coordinates.x + delta.x)
-                let top = Math.round(coordinates.y + delta.y)
-                const [x, y] = snapToGrid(left, top)
-                setCoordinates({
-                    x,
-                    y
-                })
+    const moveNode = (e: MouseEvent) => {
+        e.preventDefault();
+        const diffx = e.clientX - mousePosRef.current.x;
+        const diffy = e.clientY - mousePosRef.current.y;
+        mousePosRef.current = { x: e.clientX, y: e.clientY };
+        setCoordinates(({ x, y }) => {
+            return {
+                x: x + diffx,
+                y: y + diffy
             }
+        })
+
+    }
+
+    const onMouseDown = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (nodeRef.current) {
+            document.onmousemove = moveNode;
+            mousePosRef.current = { x: e.clientX, y: e.clientY };
         }
     }
 
-    const [{ isDragging }, drag] = useDrag({
-        item: {
-            id: data.id,
-            type: 'node'
-        },
-        end: onEnd,
-        collect: (monitor: DragSourceMonitor) => ({
-            isDragging: monitor.isDragging()
-        }),
-    })
+    const onMouseUp = () => {
+        document.onmousemove = null;
+        dispatch({
+            type: 'UPDATE_NODE_POSITION',
+            data: {
+                node: data.id,
+                x: coordinates.x,
+                y: coordinates.y
+            }
+        })
+    }
 
     const element = getElement(data.type);
 
-    return <div ref={drag} className="nodeContainer" style={{ ...getStyles(coordinates.x, coordinates.y, isDragging) }}>
+    return <div
+        ref={nodeRef}
+        className="nodeContainer"
+        style={{ ...getStyles(coordinates.x, coordinates.y, false) }}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+    >
         <div>
             {data.inputs.map(input => {
-                return <Pin key={input} pin={input} />
+                return <Pin key={input} pin={input} nodeCoordinates={coordinates} />
             })}
         </div>
         <p><b>{element.name}</b></p>
         <div>
             {data.outputs.map(output => {
-                return <Pin key={output} pin={output} />
+                return <Pin key={output} pin={output} nodeCoordinates={coordinates} />
             })}
         </div>
     </div>
@@ -60,20 +76,13 @@ const getStyles = (
     top: number,
     isDragging: boolean,
 ): React.CSSProperties => {
-    const transform = `translate3d(${left}px, ${top}px, 0)`
     return {
         position: 'absolute',
-        transform,
-        WebkitTransform: transform,
+        left,
+        top,
         opacity: isDragging ? 0 : 1,
         height: isDragging ? 0 : '',
     }
-}
-
-function snapToGrid(x: number, y: number): [number, number] {
-    const snappedX = Math.round(x / 10) * 10
-    const snappedY = Math.round(y / 10) * 10
-    return [snappedX, snappedY]
 }
 
 export default Node;
