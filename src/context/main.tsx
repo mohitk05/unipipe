@@ -15,6 +15,10 @@ export type InPinType = {
     type: "in";
     name: string;
     label: string;
+    position?: {
+        x: number;
+        y: number;
+    }
 }
 
 export type OutPinType = {
@@ -23,7 +27,11 @@ export type OutPinType = {
     type: "out";
     label: string;
     name: string;
-    refs: string[]
+    refs: string[],
+    position?: {
+        x: number;
+        y: number;
+    }
 }
 
 export type NodeType = {
@@ -31,7 +39,11 @@ export type NodeType = {
     type: string;
     inputs: string[]; // Pins
     outputs: string[]; // Pins
-    data?: any
+    data?: any,
+    position?: {
+        x: number;
+        y: number;
+    }
 }
 
 export type BoardState = {

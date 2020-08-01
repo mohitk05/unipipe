@@ -9,6 +9,7 @@
 	margin: 10px;
 	cursor: move;
 	background: white;
+	z-index: 2;
 }
 
 .nodeContainer,

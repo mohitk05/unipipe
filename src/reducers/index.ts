@@ -1,9 +1,10 @@
-import { StoreStateType, BoardState } from './../context/main';
+import { StoreStateType, BoardState, NodeType } from './../context/main';
 import { BoardActions } from '../actions/board';
 import cloneDeep from 'lodash/cloneDeep';
 
 export const boardReducer = (state: BoardState, action: BoardActions) => {
 	let stateClone: BoardState;
+	let tempNode: NodeType | undefined;
 	switch (action.type) {
 		case 'CREATE_NODE':
 			stateClone = cloneDeep(state);
@@ -42,11 +43,42 @@ export const boardReducer = (state: BoardState, action: BoardActions) => {
 			stateClone = cloneDeep(state);
 			delete stateClone.selectedPin;
 			return stateClone;
+		case 'UPDATE_INPUT_PIN_POSITION':
+			stateClone = cloneDeep(state);
+			stateClone.inputPins &&
+				(stateClone.inputPins[action.data.pin].position = {
+					x: action.data.x,
+					y: action.data.y,
+				});
+			return stateClone;
+		case 'UPDATE_OUTPUT_PIN_POSITION':
+			stateClone = cloneDeep(state);
+			stateClone.outputPins &&
+				(stateClone.outputPins[action.data.pin].position = {
+					x: action.data.x,
+					y: action.data.y,
+				});
+			return stateClone;
+		case 'UPDATE_NODE_POSITION':
+			stateClone = cloneDeep(state);
+			tempNode =
+				stateClone.nodes &&
+				stateClone.nodes.find((node) => node.id === action.data.node);
+			if (tempNode) {
+				tempNode.position = { x: action.data.x, y: action.data.y };
+			}
+			return stateClone;
 		default:
 			return state;
 	}
 };
 
-export const main = (state: StoreStateType, action: BoardActions) => ({
-	board: boardReducer(state.board, action),
-});
+export const main = (state: StoreStateType, action: BoardActions) => {
+	const newState = {
+		board: boardReducer(state.board, action),
+	};
+
+	localStorage.setItem('store_state', JSON.stringify(newState));
+
+	return newState;
+};

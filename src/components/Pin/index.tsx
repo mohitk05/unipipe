@@ -1,15 +1,36 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useRef, useCallback } from 'react';
 import { MainContext, InPinType, OutPinType } from '../../context/main';
 
 type PinProps = {
-    pin: string
+    pin: string;
+    nodeCoordinates: {
+        x: number;
+        y: number;
+    }
 }
 
 const Pin = (props: PinProps) => {
     const { state: { board }, dispatch } = useContext(MainContext);
-    const getPin = (pinId: string): InPinType | OutPinType => {
+    const pinRef = useRef<HTMLDivElement>(null);
+
+    const getPin = useCallback((pinId: string): InPinType | OutPinType => {
         return Object.assign({}, board.inputPins, board.outputPins)[pinId];
-    }
+    }, [board.inputPins, board.outputPins])
+
+    const pin = getPin(props.pin);
+
+    useEffect(() => {
+        if (pinRef.current) {
+            dispatch({
+                type: pin.type === 'in' ? 'UPDATE_INPUT_PIN_POSITION' : 'UPDATE_OUTPUT_PIN_POSITION',
+                data: {
+                    pin: props.pin,
+                    x: props.nodeCoordinates.x + pinRef.current.offsetLeft + (pin.type === 'out' ? pinRef.current.offsetWidth : 0),
+                    y: props.nodeCoordinates.y + pinRef.current.offsetTop + pinRef.current.offsetHeight
+                }
+            })
+        }
+    }, [props.nodeCoordinates, dispatch, props.pin, pin.type])
 
     const markSelected = (pin: string) => {
         dispatch({
@@ -20,13 +41,15 @@ const Pin = (props: PinProps) => {
         })
     }
 
-    const pinClicked = () => {
+    const pinClicked = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (board.selectedPin) {
             const selected = getPin(board.selectedPin);
             if (selected.type === pinObject.type) {
                 console.log('Cannot connect similar pins.')
             } else {
-                if (pinObject.type === 'in') {
+                if (pinObject.type === 'in' && !pinObject.ref) {
                     // add selected id to current ref
                     dispatch({
                         type: 'CONNECT_PINS',
@@ -58,7 +81,7 @@ const Pin = (props: PinProps) => {
         }
     }
 
-    return <div onClick={pinClicked}>
+    return <div onClick={pinClicked} ref={pinRef}>
         <div style={board.selectedPin === props.pin ? styles.selected : { padding: 4 }}>{getTag(pinObject.type)}</div>
     </div>
 }
