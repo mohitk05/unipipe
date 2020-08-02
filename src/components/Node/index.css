@@ -1,15 +1,16 @@
 .nodeContainer {
-	padding: 10px;
+	padding: 10px 5px;
 	border: 2px solid #ccc;
 	border-radius: 4px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	width: 200px;
+	width: 150px;
 	margin: 10px;
 	cursor: move;
 	background: white;
 	z-index: 2;
+	font-size: 0.8em;
 }
 
 .nodeContainer,

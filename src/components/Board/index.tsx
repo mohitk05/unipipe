@@ -13,6 +13,7 @@ const Board = () => {
 
     return (
         <div style={styles.board}>
+            <h1 style={{ marginLeft: 10 }}>unipipe</h1>
             {nodes && nodes.map(node => {
                 return <Node key={node.id} data={node} />
             })}

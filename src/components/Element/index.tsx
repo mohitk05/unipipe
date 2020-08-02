@@ -42,7 +42,6 @@ const Element = ({ data }: ElementProps) => {
 
 const styles = {
     element: {
-        padding: 4,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

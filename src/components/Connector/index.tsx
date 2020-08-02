@@ -9,7 +9,7 @@ type ConnectorProps = {
 const Connector = (props: ConnectorProps) => {
     if (!props.from.position || !props.to.position) return null;
     return <path
-        d={`M ${props.from.position.x} ${props.from.position.y} L ${props.from.position.x + 40} ${props.from.position.y} L ${props.to.position.x - 20} ${props.to.position.y} L ${props.to.position.x} ${props.to.position.y}`}
+        d={`M ${props.from.position.x} ${props.from.position.y} L ${props.from.position.x} ${props.from.position.y} C ${props.to.position.x} ${props.from.position.y} ${props.from.position.x} ${props.to.position.y} ${props.to.position.x} ${props.to.position.y} L ${props.to.position.x} ${props.to.position.y}`}
         stroke="red"
         strokeWidth="2"
         fill="none"
