@@ -23,9 +23,11 @@ export const createNode = (type: string) => {
 		type,
 		inputs: inputInstances.map((i) => i.id),
 		outputs: outputInstances.map((o) => o.id),
-		data: element.initialData,
 	};
 
+	if (element.initialData) {
+		node.data = eval(`(${element.initialData})(node)`);
+	}
 	return {
 		node,
 		pins: [...inputInstances, ...outputInstances],

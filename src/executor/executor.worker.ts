@@ -1,5 +1,7 @@
 import { NodeType, InPinType, OutPinType } from '../context/main';
-import { getElementProcessor, getElement } from '../util/element';
+import { ElementType } from '../util/element';
+
+const ctx: Worker = self as any;
 
 /*
 Algorithm
@@ -16,6 +18,7 @@ current: current node in the process
         - Start recursive executions for each branch.
     - In each case, set current to the next node, call executeRecursive() with the new current
 */
+let globalElements: { [key: string]: ElementType } = {};
 
 class ExecutorNode {
 	node: NodeType;
@@ -27,11 +30,7 @@ class ExecutorNode {
 		this.node = node;
 		this.subscribers = [];
 		this.isExecuting = false;
-		if (getElement(node.type).type === 'constant') {
-			this.data = node.data.value;
-		} else {
-			this.data = null;
-		}
+		this.data = null;
 	}
 
 	getNode(): NodeType {
@@ -63,13 +62,12 @@ class ExecutorNode {
 	}
 
 	execute(scopeData: any) {
-		const config = this.node.data;
-		const processor = getElementProcessor(this.node.type);
+		const processor = globalElements[this.node.type].processor;
 		this.isExecuting = true;
 		return new Promise(async (res, rej) => {
 			try {
 				const data = await eval(
-					`(${processor})({ ...scopeData, config })`
+					`(${processor})({ ...scopeData, ctx, node: this.node })`
 				);
 				this.data = data;
 				this.subscribers.forEach((s) => s());
@@ -77,7 +75,7 @@ class ExecutorNode {
 			} catch (e) {
 				rej(
 					`Error executing node - ${
-						getElement(this.node.type).type
+						globalElements[this.node.type].type
 					} (${this.node.id}). Message: ${e.message}`
 				);
 			} finally {
@@ -87,12 +85,14 @@ class ExecutorNode {
 	}
 }
 
-export const execute = (
+const execute = (
 	nodes: NodeType[],
 	inputPins: { [key: string]: InPinType },
 	outputPins: { [key: string]: OutPinType },
-	head: string
+	elements: { [key: string]: ElementType }
+	// head: string
 ) => {
+	globalElements = elements;
 	let nodeMap: { [key: string]: ExecutorNode } = {};
 	nodes.forEach((node) => {
 		nodeMap[node.id] = new ExecutorNode(node);
@@ -132,7 +132,7 @@ export const execute = (
 					.then(() => {
 						if (
 							currentNode.getNode().outputs.length &&
-							getElement(currentNode.getNode().type).type !==
+							globalElements[currentNode.getNode().type].type !==
 								'sink' &&
 							currentNode.getNode().outputs.length
 						) {
@@ -154,5 +154,75 @@ export const execute = (
 			});
 	};
 
-	executeRecursive(head);
+	const headNode = findHeadNode(nodes, inputPins, outputPins);
+	executeRecursive(headNode);
 };
+
+const findHeadNode = (
+	nodes: NodeType[],
+	inputPins: { [id: string]: InPinType },
+	outputPins: { [id: string]: OutPinType }
+): string => {
+	/* Algorithm: Find all nodes which do not have an input pin,
+		for all such pins, filter those whose outputs have only self as inputs
+	*/
+	const nodeMap: { [id: string]: NodeType } = {};
+	nodes.forEach((node) => {
+		nodeMap[node.id] = node;
+	});
+	const nodesWithoutInputs = nodes.filter((node: NodeType) => {
+		return !node.inputs.length;
+	});
+
+	const headNodes = nodesWithoutInputs.filter((node: NodeType) => {
+		let pass = true;
+		node.outputs.forEach((out) => {
+			if (pass) {
+				let outPin = outputPins[out];
+				outPin.refs.forEach((ref) => {
+					if (pass) {
+						let refInputPin = inputPins[ref];
+						let refNode: NodeType = nodeMap[refInputPin.node];
+						let refNodeInputPins = refNode.inputs.map(
+							(i) => inputPins[i]
+						);
+
+						refNodeInputPins.forEach((refNodeInputPin) => {
+							if (
+								pass &&
+								refNodeInputPin.ref &&
+								refNodeInputPin.ref !== out
+							) {
+								pass = false;
+							}
+						});
+					}
+				});
+			}
+		});
+
+		return pass;
+	});
+
+	// Simply return the first node without any inputs.
+	return nodesWithoutInputs[0].id;
+};
+
+ctx.addEventListener('message', (e: MessageEvent) => {
+	const data: { action: string; data: any } = e.data;
+	const action = data.action;
+
+	switch (action) {
+		case 'execute':
+			execute(
+				data.data.nodes,
+				data.data.inputPins,
+				data.data.outputPins,
+				data.data.elements
+				// data.data.headNode
+			);
+			return;
+		default:
+			return;
+	}
+});

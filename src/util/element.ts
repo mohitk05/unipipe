@@ -1,8 +1,10 @@
 import { getProcessor } from './processor';
 import { v4 as uuidv4 } from 'uuid';
+import { NodeType } from '../context/main';
 
 export type ElementType = {
 	id: string;
+	key: string;
 	type: string;
 	name: string;
 	description?: string;
@@ -76,7 +78,33 @@ export const pinMapping: PinMapping = {
 			},
 		],
 	},
+	regex: {
+		inputs: [
+			{
+				type: 'in',
+				label: 'input',
+				name: 'input',
+			},
+		],
+		outputs: [
+			{
+				type: 'out',
+				label: 'matches',
+				name: 'matches',
+			},
+		],
+	},
 	console: {
+		inputs: [
+			{
+				type: 'in',
+				label: 'input',
+				name: 'input',
+			},
+		],
+		outputs: [],
+	},
+	display: {
 		inputs: [
 			{
 				type: 'in',
@@ -89,43 +117,68 @@ export const pinMapping: PinMapping = {
 };
 
 export const elements: {
+	key: string;
 	type: string;
 	name: string;
 	processor?: string;
 	pinMapping: InputOutput;
-	initialData?: any;
+	initialData?: (node: NodeType) => object;
 }[] = [
 	{
+		key: 'add',
 		type: 'add',
 		name: 'Add',
 		processor: getProcessor('add'),
 		pinMapping: pinMapping['add'],
 	},
 	{
+		key: 'square',
 		type: 'square',
 		name: 'Square',
 		processor: getProcessor('square'),
 		pinMapping: pinMapping['square'],
 	},
 	{
+		key: 'constant',
 		type: 'constant',
 		name: 'Constant',
-		initialData: {
-			value: 4,
+		initialData: () => {
+			return { value: 4 };
 		},
+		processor: getProcessor('constant'),
 		pinMapping: pinMapping['constant'],
 	},
 	{
+		key: 'regex',
+		type: 'regex',
+		name: 'Regex Match',
+		processor: getProcessor('regex'),
+		initialData: () => {
+			return {
+				regex: 'hey',
+				flags: 'g',
+			};
+		},
+		pinMapping: pinMapping['regex'],
+	},
+	{
+		key: 'console',
 		type: 'sink',
 		name: 'Console',
 		processor: getProcessor('console'),
 		pinMapping: pinMapping['console'],
 	},
 	{
+		key: 'display',
 		type: 'sink',
 		name: 'Display',
 		processor: getProcessor('display'),
 		pinMapping: pinMapping['display'],
+		initialData: (node: NodeType) => {
+			return {
+				node: node.id,
+			};
+		},
 	},
 ];
 
@@ -137,6 +190,7 @@ const init = (): { [id: string]: ElementType } => {
 		elementMap[id] = {
 			id,
 			...el,
+			initialData: el.initialData && el.initialData.toString(),
 		};
 	});
 

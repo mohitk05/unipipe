@@ -1,14 +1,35 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Node from './../Node';
 import { MainContext } from '../../context/main';
-import { execute } from '../../executor';
 import Connector from '../Connector';
+import Executor from 'worker-loader!../../executor/executor.worker.ts';
+import { getAllElements } from '../../util/element';
+/* eslint import/no-webpack-loader-syntax: off */
+const executor = new Executor();
 
 const Board = () => {
-    const { state: { board: { nodes, inputPins, outputPins, headNode } } } = useContext(MainContext);
+    const { state: { board: { nodes, inputPins, outputPins, headNode } }, dispatch } = useContext(MainContext);
+
+    useEffect(() => {
+        executor.addEventListener('message', (e: MessageEvent) => {
+            const data: { type: string; node: string; update: object } = e.data;
+            switch (data.type) {
+                case 'update_node':
+                    dispatch({
+                        type: 'UPDATE_NODE_DATA_PARTIAL',
+                        data: {
+                            node: data.node,
+                            update: data.update
+                        }
+                    })
+                    break;
+                default: return;
+            }
+        })
+    }, [dispatch])
 
     const executeBoard = () => {
-        execute(nodes || [], inputPins || {}, outputPins || {}, headNode || '');
+        executor.postMessage({ action: 'execute', data: { nodes: nodes || [], inputPins: inputPins || {}, outputPins: outputPins || {}, elements: getAllElements(), headNode: headNode || '' } });
     }
 
     return (

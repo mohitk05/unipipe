@@ -10,9 +10,43 @@ type NodeProps = {
 
 const Node = ({ data }: NodeProps) => {
     const [coordinates, setCoordinates] = useState(data.position || { x: 170, y: 20 });
+    const [dataModalOpen, setDataModalOpen] = useState(false);
+    const [modalData, setModalData] = useState(data.data ? JSON.stringify(data.data, null, 4) : '');
     const { dispatch } = useContext(MainContext);
     const nodeRef = useRef<HTMLDivElement>(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
+
+    const openModal = () => {
+        setDataModalOpen(true);
+    }
+
+    const closeModal = () => {
+        setDataModalOpen(false);
+    }
+
+    const onClickModalInner = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    }
+
+    const updateModalData = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setModalData(e.target.value);
+    }
+
+    const saveUpdatedData = () => {
+        try {
+            let updatedData = JSON.parse(modalData);
+            dispatch({
+                type: 'UPDATE_NODE_DATA',
+                data: {
+                    node: data.id,
+                    newData: updatedData
+                }
+            })
+            closeModal();
+        } catch {
+            console.log('Invalid JSON structure, cannot save.')
+        }
+    }
 
     const moveNode = (e: MouseEvent) => {
         e.preventDefault();
@@ -53,35 +87,84 @@ const Node = ({ data }: NodeProps) => {
     return <div
         ref={nodeRef}
         className="nodeContainer"
-        style={{ ...getStyles(coordinates.x, coordinates.y, false) }}
-        onMouseDown={onMouseDown}
-        onMouseUp={onMouseUp}
+        style={{ ...getStyles(coordinates.x, coordinates.y, dataModalOpen) }}
     >
-        <div>
-            {data.inputs.map(input => {
-                return <Pin key={input} pin={input} nodeCoordinates={coordinates} />
-            })}
+        <div
+            style={{ zIndex: 1 }}
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+        >
+            <p style={{ textAlign: 'center', margin: '10px 0 0' }}><b>{element.name}</b></p>
+            <div className="top">
+                {element.key === 'constant' ? <div style={{ border: '2px solid #ccc', padding: 5, fontFamily: 'monospace' }}>
+                    <span>{data.data.value}</span>
+                </div> : null}
+                <div>
+                    {data.inputs.map(input => {
+                        return <Pin key={input} pin={input} nodeCoordinates={coordinates} />
+                    })}
+                </div>
+                <div>
+                    {data.outputs.map(output => {
+                        return <Pin key={output} pin={output} nodeCoordinates={coordinates} />
+                    })}
+                </div>
+                {element.key === 'display' ? <div style={{ border: '2px solid #ccc', padding: 5 }}>
+                    <b>{data.data.value || 'Value'}</b>
+                </div> : null}
+            </div>
+            <div className="bottom">
+                <button onClick={openModal}>Data</button>
+            </div>
         </div>
-        <p><b>{element.name}</b></p>
-        <div>
-            {data.outputs.map(output => {
-                return <Pin key={output} pin={output} nodeCoordinates={coordinates} />
-            })}
-        </div>
+        {dataModalOpen ? <div style={styles.modal} onClick={closeModal}>
+            <div style={styles.modalInner} onClick={onClickModalInner}>
+                <h1>Edit node - {element.name}</h1>
+                <textarea style={styles.inputArea} value={modalData} onChange={updateModalData} />
+                <button onClick={saveUpdatedData}>Save</button>
+            </div>
+        </div> : null}
     </div>
 }
 
 const getStyles = (
     left: number,
     top: number,
-    isDragging: boolean,
+    modalOpen: boolean,
 ): React.CSSProperties => {
     return {
         position: 'absolute',
         left,
         top,
-        opacity: isDragging ? 0 : 1,
-        height: isDragging ? 0 : '',
+        zIndex: modalOpen ? 4 : 2
+    }
+}
+
+const styles = {
+    modal: {
+        position: 'fixed' as 'fixed',
+        left: 0,
+        top: 0,
+        background: 'rgba(0,0,0,0.4)',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2
+    },
+    modalInner: {
+        width: 500,
+        background: 'white',
+        borderRadius: 4,
+        padding: 16
+    },
+    inputArea: {
+        fontFamily: 'Menlo, monospace',
+        width: '100%',
+        display: 'block',
+        height: 300,
+        marginBottom: 10
     }
 }
 

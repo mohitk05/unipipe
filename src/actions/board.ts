@@ -63,4 +63,18 @@ export type BoardActions =
 				x: number;
 				y: number;
 			};
+	  }
+	| {
+			type: 'UPDATE_NODE_DATA';
+			data: {
+				newData: any;
+				node: string;
+			};
+	  }
+	| {
+			type: 'UPDATE_NODE_DATA_PARTIAL';
+			data: {
+				node: string;
+				update: object;
+			};
 	  };

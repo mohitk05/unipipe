@@ -68,6 +68,26 @@ export const boardReducer = (state: BoardState, action: BoardActions) => {
 				tempNode.position = { x: action.data.x, y: action.data.y };
 			}
 			return stateClone;
+		case 'UPDATE_NODE_DATA':
+			stateClone = cloneDeep(state);
+			tempNode =
+				stateClone.nodes &&
+				stateClone.nodes.find((node) => node.id === action.data.node);
+			if (tempNode) {
+				tempNode.data = action.data.newData;
+			}
+			return stateClone;
+		case 'UPDATE_NODE_DATA_PARTIAL':
+			stateClone = cloneDeep(state);
+			tempNode =
+				stateClone.nodes &&
+				stateClone.nodes.find((node) => node.id === action.data.node);
+			if (tempNode) {
+				tempNode.data = tempNode.data
+					? { ...tempNode.data, ...action.data.update }
+					: action.data.update;
+			}
+			return stateClone;
 		default:
 			return state;
 	}
