@@ -1,15 +1,9 @@
-import { NodeType, InPinType, OutPinType } from './../context/main';
+import { NodeType, InPinType, OutPinType, BoardState } from './../context/main';
 export type BoardActions =
 	| {
 			type: 'CREATE_NODE';
 			data: {
 				node: NodeType;
-			};
-	  }
-	| {
-			type: 'DELETE_NODE';
-			data: {
-				id: string;
 			};
 	  }
 	| {
@@ -35,6 +29,13 @@ export type BoardActions =
 	  }
 	| {
 			type: 'CONNECT_PINS';
+			data: {
+				input: string;
+				output: string;
+			};
+	  }
+	| {
+			type: 'DISCONNECT_PINS';
 			data: {
 				input: string;
 				output: string;
@@ -76,5 +77,17 @@ export type BoardActions =
 			data: {
 				node: string;
 				update: object;
+			};
+	  }
+	| {
+			type: 'LOAD_RECIPE';
+			data: {
+				state: BoardState;
+			};
+	  }
+	| {
+			type: 'DELETE_NODE';
+			data: {
+				node: string;
 			};
 	  };

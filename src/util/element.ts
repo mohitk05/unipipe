@@ -68,6 +68,48 @@ export const pinMapping: PinMapping = {
 			},
 		],
 	},
+	factorial: {
+		inputs: [
+			{
+				type: 'in',
+				label: 'input',
+				name: 'input',
+			},
+		],
+		outputs: [
+			{
+				type: 'out',
+				label: 'factorial',
+				name: 'factorial',
+			},
+		],
+	},
+	conditional: {
+		inputs: [
+			{
+				type: 'in',
+				label: 'input1',
+				name: 'input1',
+			},
+			{
+				type: 'in',
+				label: 'input2',
+				name: 'input2',
+			},
+		],
+		outputs: [
+			{
+				type: 'out',
+				label: 'true',
+				name: 'true',
+			},
+			{
+				type: 'out',
+				label: 'false',
+				name: 'false',
+			},
+		],
+	},
 	constant: {
 		inputs: [],
 		outputs: [
@@ -137,6 +179,20 @@ export const elements: {
 		name: 'Square',
 		processor: getProcessor('square'),
 		pinMapping: pinMapping['square'],
+	},
+	{
+		key: 'factorial',
+		type: 'factorial',
+		name: 'Factorial',
+		processor: getProcessor('factorial'),
+		pinMapping: pinMapping['factorial'],
+	},
+	{
+		key: 'conditional',
+		type: 'conditional',
+		name: 'Conditional',
+		processor: getProcessor('conditional'),
+		pinMapping: pinMapping['conditional'],
 	},
 	{
 		key: 'constant',

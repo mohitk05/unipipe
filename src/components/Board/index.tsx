@@ -4,11 +4,13 @@ import { MainContext } from '../../context/main';
 import Connector from '../Connector';
 import Executor from 'worker-loader!../../executor/executor.worker.ts';
 import { getAllElements } from '../../util/element';
+import { v4 as uuidv4 } from 'uuid';
 /* eslint import/no-webpack-loader-syntax: off */
 const executor = new Executor();
 
 const Board = () => {
-    const { state: { board: { nodes, inputPins, outputPins, headNode } }, dispatch } = useContext(MainContext);
+    const { state: { board }, dispatch } = useContext(MainContext);
+    const { nodes, inputPins, outputPins, headNode } = board;
 
     useEffect(() => {
         executor.addEventListener('message', (e: MessageEvent) => {
@@ -32,9 +34,29 @@ const Board = () => {
         executor.postMessage({ action: 'execute', data: { nodes: nodes || [], inputPins: inputPins || {}, outputPins: outputPins || {}, elements: getAllElements(), headNode: headNode || '' } });
     }
 
+    const saveRecipe = () => {
+        // Replace with server call
+        localStorage.setItem('recipe_' + uuidv4(), JSON.stringify(board));
+    }
+
+    const loadRecipe = () => {
+        const recipe = localStorage.getItem('recipe_922c6adb-1c70-4b51-b895-e55e59eb8e14');
+        if (recipe) {
+            let recipe_state = JSON.parse(recipe);
+            dispatch({
+                type: 'LOAD_RECIPE',
+                data: {
+                    state: recipe_state
+                }
+            })
+        }
+    }
+
     return (
         <div style={styles.board}>
-            <h1 style={{ marginLeft: 10 }}>unipipe</h1>
+            <header style={styles.header}>
+                <h1>unipipe</h1>
+            </header>
             {nodes && nodes.map(node => {
                 return <Node key={node.id} data={node} />
             })}
@@ -51,7 +73,10 @@ const Board = () => {
                 })}
             </svg>
             <div style={styles.executeMenu}>
-                <button onClick={executeBoard}>Execute</button>
+                <h4 style={{ margin: '0 0 10px 0' }}>Controls</h4>
+                <button style={styles.button} onClick={executeBoard}>Execute</button>
+                <button style={styles.button} onClick={saveRecipe}>Save as Recipe</button>
+                <button style={styles.button} onClick={loadRecipe}>Load a recipe</button>
             </div>
         </div>
     )
@@ -64,12 +89,14 @@ const styles: { [key: string]: React.CSSProperties } = {
         position: 'relative'
     },
     executeMenu: {
-        top: 20,
-        right: 20,
         background: 'white',
-        position: 'absolute',
         padding: 20,
-        zIndex: 3
+        zIndex: 3,
+        position: 'absolute',
+        right: 40,
+        top: 20,
+        borderRadius: 2,
+        boxShadow: '0 0 10px 2px #eee'
     },
     svgParent: {
         position: 'absolute',
@@ -78,6 +105,18 @@ const styles: { [key: string]: React.CSSProperties } = {
         height: '100%',
         width: '100%',
         zIndex: 1
+    },
+    header: {
+
+    },
+    button: {
+        background: 'white',
+        border: '1px solid #ccc',
+        borderRadius: 2,
+        padding: '5px 10px',
+        display: 'block',
+        width: 150,
+        marginTop: 5
     }
 }
 

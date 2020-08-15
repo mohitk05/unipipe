@@ -5,6 +5,7 @@ import cloneDeep from 'lodash/cloneDeep';
 export const boardReducer = (state: BoardState, action: BoardActions) => {
 	let stateClone: BoardState;
 	let tempNode: NodeType | undefined;
+	let tempIndex: number | undefined;
 	switch (action.type) {
 		case 'CREATE_NODE':
 			stateClone = cloneDeep(state);
@@ -34,6 +35,24 @@ export const boardReducer = (state: BoardState, action: BoardActions) => {
 				stateClone.outputPins[action.data.output].refs.push(
 					action.data.input
 				);
+			return stateClone;
+		case 'DISCONNECT_PINS':
+			console.log(action.data);
+			stateClone = cloneDeep(state);
+			stateClone.inputPins &&
+				(stateClone.inputPins[action.data.input].ref = null);
+			tempIndex =
+				stateClone.outputPins &&
+				stateClone.outputPins[action.data.output].refs.findIndex(
+					(ref: string) => ref === action.data.input
+				);
+			if (tempIndex !== undefined && tempIndex > -1) {
+				stateClone.outputPins &&
+					stateClone.outputPins[action.data.output].refs.splice(
+						tempIndex,
+						1
+					);
+			}
 			return stateClone;
 		case 'SELECT_PIN':
 			stateClone = cloneDeep(state);
@@ -86,6 +105,25 @@ export const boardReducer = (state: BoardState, action: BoardActions) => {
 				tempNode.data = tempNode.data
 					? { ...tempNode.data, ...action.data.update }
 					: action.data.update;
+			}
+			return stateClone;
+		case 'LOAD_RECIPE':
+			return action.data.state;
+		case 'DELETE_NODE':
+			stateClone = cloneDeep(state);
+			tempIndex = stateClone.nodes?.findIndex((node: NodeType) => {
+				return node.id === action.data.node;
+			});
+			if (stateClone.nodes && tempIndex !== undefined && tempIndex > -1) {
+				tempNode = stateClone.nodes[tempIndex];
+				tempNode.inputs.forEach((input: string) => {
+					stateClone.inputPins && delete stateClone.inputPins[input];
+				});
+				tempNode.outputs.forEach((output: string) => {
+					stateClone.outputPins &&
+						delete stateClone.outputPins[output];
+				});
+				stateClone.nodes?.splice(tempIndex, 1);
 			}
 			return stateClone;
 		default:

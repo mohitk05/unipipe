@@ -25,7 +25,7 @@ const Pin = (props: PinProps) => {
                 type: pin.type === 'in' ? 'UPDATE_INPUT_PIN_POSITION' : 'UPDATE_OUTPUT_PIN_POSITION',
                 data: {
                     pin: props.pin,
-                    x: props.nodeCoordinates.x + pinRef.current.offsetLeft + (pin.type === 'out' ? pinRef.current.offsetWidth : 0),
+                    x: props.nodeCoordinates.x + pinRef.current.offsetLeft + 12 + (pin.type === 'out' ? pinRef.current.offsetWidth : 0),
                     y: props.nodeCoordinates.y + pinRef.current.offsetTop + pinRef.current.offsetHeight
                 }
             })
@@ -82,7 +82,7 @@ const Pin = (props: PinProps) => {
     }
 
     return <div onClick={pinClicked} ref={pinRef}>
-        <div style={board.selectedPin === props.pin ? styles.selected : { padding: 4 }}>{getTag(pinObject.type)}</div>
+        <div style={board.selectedPin === props.pin ? styles.selected : { padding: 4, textAlign: pinObject.type === 'in' ? 'left' : 'right' }}>{getTag(pinObject.type)}</div>
     </div>
 }
 

@@ -24,12 +24,12 @@ class ExecutorNode {
 	node: NodeType;
 	subscribers: Function[];
 	data: any | null;
-	isExecuting: boolean;
+	isWaiting: boolean;
 
 	constructor(node: NodeType) {
 		this.node = node;
 		this.subscribers = [];
-		this.isExecuting = false;
+		this.isWaiting = false;
 		this.data = null;
 	}
 
@@ -37,33 +37,37 @@ class ExecutorNode {
 		return this.node;
 	}
 
-	getData(): Promise<any> {
+	getData(outPinName: string): Promise<any> {
 		return new Promise((resolve, reject) => {
 			if (this.data !== null) {
-				return resolve(this.data);
-			} else if (this.isExecuting) {
+				return resolve(this.data[outPinName]);
+			} else if (this.isWaiting) {
 				let timedOut = false;
 				const timeout = setTimeout(() => {
 					timedOut = true;
-					reject('Input node execution timed out.');
+					reject({
+						code: 500,
+						message: 'Input node execution timed out.',
+					});
 				}, 20000);
 				this.subscribers.push(() => {
 					if (!timedOut) {
 						clearTimeout(timeout);
-						resolve(this.data);
+						resolve(this.data[outPinName]);
 					}
 				});
 			} else {
-				// reject(
-				// 	`The input node isn't responding. Rerun the process to try again.`
-				// );
+				this.isWaiting = true;
+				reject({
+					code: 400,
+					message: `Input node needs to be executed.`,
+				});
 			}
 		});
 	}
 
 	execute(scopeData: any) {
 		const processor = globalElements[this.node.type].processor;
-		this.isExecuting = true;
 		return new Promise(async (res, rej) => {
 			try {
 				const data = await eval(
@@ -71,7 +75,7 @@ class ExecutorNode {
 				);
 				this.data = data;
 				this.subscribers.forEach((s) => s());
-				res();
+				res(data);
 			} catch (e) {
 				rej(
 					`Error executing node - ${
@@ -79,7 +83,7 @@ class ExecutorNode {
 					} (${this.node.id}). Message: ${e.message}`
 				);
 			} finally {
-				this.isExecuting = false;
+				this.isWaiting = false;
 			}
 		});
 	}
@@ -90,7 +94,6 @@ const execute = (
 	inputPins: { [key: string]: InPinType },
 	outputPins: { [key: string]: OutPinType },
 	elements: { [key: string]: ElementType }
-	// head: string
 ) => {
 	globalElements = elements;
 	let nodeMap: { [key: string]: ExecutorNode } = {};
@@ -100,9 +103,7 @@ const execute = (
 	const executeRecursive = async (current: string) => {
 		const currentNode = nodeMap[current];
 		const inputs = currentNode.getNode().inputs;
-
 		let inputPromises: Promise<any>[] = [];
-
 		inputs.forEach((input) => {
 			const inputPin = inputPins[input];
 			if (inputPin.ref) {
@@ -111,15 +112,31 @@ const execute = (
 				inputPromises.push(
 					new Promise((res, rej) => {
 						inputNode
-							.getData()
+							.getData(inputRefPin.name)
 							.then((data) => {
 								res({ data, name: inputPin.name });
 							})
-							.catch(rej);
+							.catch(
+								async ({
+									code,
+									message,
+								}: {
+									code: number;
+									message: string;
+								}) => {
+									if (code === 400) {
+										executeRecursive(inputNode.node.id);
+									} else {
+										rej(message);
+									}
+								}
+							);
 					})
 				);
 			}
 		});
+
+		// separate input forEach from logic of moving to next node
 
 		await Promise.all(inputPromises)
 			.then((results) => {
@@ -129,20 +146,42 @@ const execute = (
 				});
 				currentNode
 					.execute(scopeData)
-					.then(() => {
+					.then((data: any) => {
+						const moveToNextNode = (out: string) => {
+							const outPinRefs = outputPins[out].refs;
+							let nextNodes: {
+								[id: string]: 1 | undefined;
+							} = {};
+							outPinRefs.forEach((oRef) => {
+								const nextNode = inputPins[oRef].node;
+								if (!nextNodes[nextNode]) {
+									executeRecursive(nextNode);
+									nextNodes[nextNode] = 1;
+								}
+							});
+						};
 						if (
 							currentNode.getNode().outputs.length &&
-							globalElements[currentNode.getNode().type].type !==
-								'sink' &&
+							!['sink', 'conditional'].includes(
+								globalElements[currentNode.getNode().type].type
+							) &&
 							currentNode.getNode().outputs.length
 						) {
-							currentNode.getNode().outputs.forEach((out) => {
-								const outPinRefs = outputPins[out].refs;
-								outPinRefs.forEach((oRef) => {
-									const nextNode = inputPins[oRef].node;
-									executeRecursive(nextNode);
-								});
-							});
+							currentNode
+								.getNode()
+								.outputs.forEach(moveToNextNode);
+						} else if (
+							globalElements[currentNode.getNode().type].type ==
+							'conditional'
+						) {
+							console.log({ data });
+							let next: string = '';
+							if (data.true) {
+								next = currentNode.getNode().outputs[0];
+							} else {
+								next = currentNode.getNode().outputs[1];
+							}
+							moveToNextNode(next);
 						}
 					})
 					.catch((e) => {
@@ -150,7 +189,7 @@ const execute = (
 					});
 			})
 			.catch((e) => {
-				throw new Error(e);
+				console.log(e);
 			});
 	};
 
@@ -205,7 +244,7 @@ const findHeadNode = (
 	});
 
 	// Simply return the first node without any inputs.
-	return nodesWithoutInputs[0].id;
+	return nodesWithoutInputs[0] ? nodesWithoutInputs[0].id : nodes[0].id;
 };
 
 ctx.addEventListener('message', (e: MessageEvent) => {
@@ -219,7 +258,6 @@ ctx.addEventListener('message', (e: MessageEvent) => {
 				data.data.inputPins,
 				data.data.outputPins,
 				data.data.elements
-				// data.data.headNode
 			);
 			return;
 		default:

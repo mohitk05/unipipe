@@ -12,7 +12,7 @@ const Node = ({ data }: NodeProps) => {
     const [coordinates, setCoordinates] = useState(data.position || { x: 170, y: 20 });
     const [dataModalOpen, setDataModalOpen] = useState(false);
     const [modalData, setModalData] = useState(data.data ? JSON.stringify(data.data, null, 4) : '');
-    const { dispatch } = useContext(MainContext);
+    const { state: { board: { inputPins, outputPins } }, dispatch } = useContext(MainContext);
     const nodeRef = useRef<HTMLDivElement>(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
 
@@ -46,6 +46,40 @@ const Node = ({ data }: NodeProps) => {
         } catch {
             console.log('Invalid JSON structure, cannot save.')
         }
+    }
+
+    const deleteNode = () => {
+        // 1. Clear references of input and output pins from connected nodes
+        // 2. Delete all pins
+        // 3. Delete node
+        data.inputs.forEach((input: string) => {
+            if (inputPins && inputPins[input].ref) {
+                dispatch({
+                    type: 'DISCONNECT_PINS',
+                    data: {
+                        input,
+                        output: inputPins ? inputPins[input].ref : ''
+                    }
+                })
+            }
+        })
+        data.outputs.forEach((output: string) => {
+            outputPins && outputPins[output].refs.forEach((ref: string) => {
+                dispatch({
+                    type: 'DISCONNECT_PINS',
+                    data: {
+                        input: ref,
+                        output
+                    }
+                })
+            })
+        })
+        dispatch({
+            type: 'DELETE_NODE',
+            data: {
+                node: data.id
+            }
+        })
     }
 
     const moveNode = (e: MouseEvent) => {
@@ -115,6 +149,7 @@ const Node = ({ data }: NodeProps) => {
             </div>
             <div className="bottom">
                 <button onClick={openModal}>Data</button>
+                <button onClick={deleteNode}>Delete</button>
             </div>
         </div>
         {dataModalOpen ? <div style={styles.modal} onClick={closeModal}>

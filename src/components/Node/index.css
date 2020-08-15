@@ -28,7 +28,5 @@
 
 .bottom button {
 	font-size: 10px;
-}
-
-.inputArea {
+	margin-right: 5px;
 }
