@@ -1,12 +1,14 @@
-import React, { useContext, useEffect } from 'react';
+import * as React from 'react';
 import Node from './../Node';
 import { MainContext } from '../../context/main';
 import Connector from '../Connector';
-import Executor from 'worker-loader!../../executor/executor.worker.ts';
+import Executor from 'worker-loader!../../executor/executor.worker';
 import { getAllElements } from '../../util/element';
 import { v4 as uuidv4 } from 'uuid';
 /* eslint import/no-webpack-loader-syntax: off */
 const executor = new Executor();
+
+const { useContext, useEffect } = React;
 
 const Board = () => {
     const { state: { board }, dispatch } = useContext(MainContext);

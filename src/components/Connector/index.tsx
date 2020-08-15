@@ -1,6 +1,8 @@
-import React, { useCallback, useState, useContext, useEffect } from 'react';
+import * as React from 'react';
 import { OutPinType, InPinType, MainContext } from '../../context/main';
 import './index.css';
+
+const { useCallback, useState, useContext, useEffect } = React;
 
 type ConnectorProps = {
     from: OutPinType;

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import Element from './../Element';
 import { getAllElements } from './../../util/element';
 

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import * as React from 'react';
 import { MainContext } from '../../context/main';
 import { createNode } from './../../util/node';
 import { ElementType } from './../../util/element';
@@ -8,7 +8,7 @@ interface ElementProps {
 }
 
 const Element = ({ data }: ElementProps) => {
-    const { dispatch } = useContext(MainContext);
+    const { dispatch } = React.useContext(MainContext);
 
     const addElementToBoard = () => {
         let { node, inputPins, outputPins } = createNode(data.id)

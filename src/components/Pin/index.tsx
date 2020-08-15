@@ -1,5 +1,7 @@
-import React, { useContext, useEffect, useRef, useCallback } from 'react';
+import * as React from 'react';
 import { MainContext, InPinType, OutPinType } from '../../context/main';
+
+const { useContext, useEffect, useRef, useCallback } = React;
 
 type PinProps = {
     pin: string;

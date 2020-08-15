@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import * as React from 'react';
 
 // export type PinType = {
 //     id: string;
@@ -70,7 +70,7 @@ export const initialState: StoreStateType = {
     }
 }
 
-export const MainContext = createContext<{
+export const MainContext = React.createContext<{
     state: StoreStateType;
     dispatch: React.Dispatch<any>;
 }>({

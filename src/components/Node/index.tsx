@@ -1,8 +1,10 @@
-import React, { useState, useRef, useContext } from 'react';
+import * as React from 'react';
 import Pin from './../Pin';
 import { NodeType, MainContext } from '../../context/main';
 import './index.css';
 import { getElement } from '../../util/element';
+
+const { useState, useRef, useContext } = React;
 
 type NodeProps = {
     data: NodeType

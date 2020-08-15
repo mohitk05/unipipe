@@ -1,6 +1,8 @@
 import { StoreStateType, BoardState, NodeType } from './../context/main';
 import { BoardActions } from '../actions/board';
-import cloneDeep from 'lodash/cloneDeep';
+import * as lodash from 'lodash';
+
+const cloneDeep = lodash.cloneDeep;
 
 export const boardReducer = (state: BoardState, action: BoardActions) => {
 	let stateClone: BoardState;
