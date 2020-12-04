@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Row, Col, Skeleton, notification } from 'antd';
+import { Card, Row, Col, notification } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
@@ -24,42 +24,45 @@ const LandingPage = () => {
     }, [])
 
     return (
-        isLoading ? <Skeleton active /> : <Row justify='start' align='middle'>
-            <Col span={4}>
-                <Link to='/home'>
-                    <Card
-                        hoverable
-                        style={styles.card}
-                    >
-                        <Meta
-                            title="+ Add New"
-                        />
-                    </Card>
-                </Link>
-            </Col>
-            {stories.map((item: any) =>
-                <Col span={4}>
-                    <Link to={`/home/${item.id}`}>
+        <div style={{ height: '100vh' }}>
+            <Row justify='start' align='middle'>
+                <Col key='initial' span={4}>
+                    <Link to='/home'>
                         <Card
                             hoverable
                             style={styles.card}
-                            cover={
-                                <img
-                                    style={{ width: 225, height: 165, borderStartStartRadius: 3 }}
-                                    alt="example"
-                                    src={item.cover}
-                                />
-                            }
+                            loading={isLoading}
                         >
                             <Meta
-                                title={item.title}
-                                description={item.description}
+                                title="+ Add New"
                             />
                         </Card>
                     </Link>
                 </Col>
-            )}
-        </Row>
+                {stories.map((item: any, index: number) =>
+                    <Col key={index} span={4}>
+                        <Link to={`/home/${item.id}`}>
+                            <Card
+                                hoverable
+                                style={styles.card}
+                                cover={
+                                    <img
+                                        style={{ borderStartStartRadius: 3 }}
+                                        alt="example"
+                                        src={item.cover}
+                                    />
+                                }
+                            >
+                                <Meta
+                                    title={item.title}
+                                    description={item.description}
+                                />
+                            </Card>
+                        </Link>
+                    </Col>
+                )}
+            </Row>
+        </div>
     )
 }
 
