@@ -1,32 +1,67 @@
 .nodeContainer {
-	border: 2px solid #ccc;
-	border-radius: 4px;
-	width: 180px;
-	margin: 10px;
-	background: white;
-	z-index: 2;
-	font-size: 0.8em;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    width: 180px;
+    margin: 10px;
+    background: white;
+    z-index: 2;
+    font-size: 0.8em;
 }
 
 .top,
 .top:active {
-	cursor: move;
+    cursor: move;
 }
 
 .top {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5px;
 }
 
 .bottom {
-	display: flex;
-	border-top: 1px solid #ccc;
-	padding: 5px;
+    display: flex;
+    border-top: 1px solid #ccc;
+    padding: 5px;
 }
 
 .bottom button {
-	font-size: 10px;
-	margin-right: 5px;
+    font-size: 10px;
+    margin-right: 5px;
+}
+
+.status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: block;
+    opacity: 1;
+}
+.pending {
+    background-color: lightgray;
+}
+.executing {
+    background-color: orange;
+    animation-name: blink;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+}
+.successful {
+    background-color: green;
+}
+.failed {
+    background-color: red;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
