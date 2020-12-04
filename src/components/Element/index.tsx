@@ -2,7 +2,9 @@ import * as React from 'react';
 import { MainContext } from '../../context/main';
 import { createNode } from './../../util/node';
 import { ElementType } from './../../util/element';
-
+import {
+    AppstoreAddOutlined
+} from '@ant-design/icons';
 interface ElementProps {
     data: ElementType
 }
@@ -33,15 +35,16 @@ const Element = ({ data }: ElementProps) => {
     }
 
     return (
-        <div style={styles.element}>
-            <p>{data.name}</p>
-            <button onClick={addElementToBoard}>Add</button>
+        <div onClick={addElementToBoard} style={styles.element}>
+            <p style={{ margin: 0 }}>{data.name}</p>
+            <AppstoreAddOutlined />
         </div>
     )
 }
 
 const styles = {
     element: {
+        cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

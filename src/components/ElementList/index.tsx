@@ -1,21 +1,26 @@
 import * as React from 'react';
 import Element from './../Element';
 import { getAllElements } from './../../util/element';
+import { List } from 'antd';
 
 const ElementList = () => {
     const elements = getAllElements();
-    return <div style={styles.elementList}>
-        <h2>Elements</h2>
-        {Object.keys(elements).map(el => {
-            return <Element key={el} data={elements[el]} />
-        })}
-    </div>
+    return <List
+        header='Elements'
+        bordered
+        dataSource={Object.keys(elements)}
+        renderItem={item => (
+            <List.Item>
+                <Element key={item} data={elements[item]} />
+            </List.Item>
+        )}
+    />
 }
 
 const styles = {
     elementList: {
         padding: 20,
-        width: 150,
+        width: 300,
         borderRight: '1px solid #ccc'
     }
 }
