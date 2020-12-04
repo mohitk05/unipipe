@@ -36,14 +36,15 @@ const Board = () => {
         });
     }, [dispatch]);
 
-    const executeBoard = () => {
+    const executeBoard = async () => {
+        let allElements = await getAllElements();
         executor.postMessage({
             action: "execute",
             data: {
                 nodes: nodes || [],
                 inputPins: inputPins || {},
                 outputPins: outputPins || {},
-                elements: getAllElements(),
+                elements: allElements,
                 headNode: headNode || "",
             },
         });
@@ -71,9 +72,6 @@ const Board = () => {
 
     return (
         <div style={styles.board}>
-            <header style={styles.header}>
-                <h1>unipipe</h1>
-            </header>
             {nodes &&
                 nodes.map((node) => {
                     return <Node key={node.id} data={node} />;

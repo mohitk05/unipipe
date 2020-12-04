@@ -2,7 +2,7 @@ import * as React from "react";
 import Pin from "./../Pin";
 import { NodeType, MainContext } from "../../context/main";
 import "./index.css";
-import { getElement } from "../../util/element";
+import { ElementType, getElement } from "../../util/element";
 
 const { useState, useRef, useContext } = React;
 
@@ -15,6 +15,7 @@ const Node = ({ data }: NodeProps) => {
         data.position || { x: 170, y: 20 }
     );
     const [dataModalOpen, setDataModalOpen] = useState(false);
+    const [element, setElement] = useState<ElementType>();
     const [modalData, setModalData] = useState(
         data.data ? JSON.stringify(data.data, null, 4) : ""
     );
@@ -26,6 +27,12 @@ const Node = ({ data }: NodeProps) => {
     } = useContext(MainContext);
     const nodeRef = useRef<HTMLDivElement>(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
+
+    React.useEffect(() => {
+        getElement(data.type).then((el) => {
+            setElement(el);
+        });
+    }, []);
 
     const openModal = () => {
         setDataModalOpen(true);
@@ -127,8 +134,6 @@ const Node = ({ data }: NodeProps) => {
         });
     };
 
-    const element = getElement(data.type);
-
     return (
         <div
             ref={nodeRef}
@@ -137,69 +142,75 @@ const Node = ({ data }: NodeProps) => {
                 ...getStyles(coordinates.x, coordinates.y, dataModalOpen),
             }}
         >
-            <div
-                style={{ zIndex: 1 }}
-                onMouseDown={onMouseDown}
-                onMouseUp={onMouseUp}
-            >
-                <p
-                    style={{
-                        textAlign: "center",
-                        margin: "10px 5px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
+            {element && (
+                <div
+                    style={{ zIndex: 1 }}
+                    onMouseDown={onMouseDown}
+                    onMouseUp={onMouseUp}
                 >
-                    <b>{element.name}</b>
-                    <span className={getStatusClass(data.data.status)}></span>
-                </p>
-                <div className="top">
-                    {element.key === "constant" ? (
-                        <div
-                            style={{
-                                border: "2px solid #ccc",
-                                padding: 5,
-                                fontFamily: "monospace",
-                            }}
-                        >
-                            <span>{data.data.value}</span>
+                    <p
+                        style={{
+                            textAlign: "center",
+                            margin: "10px 5px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                    >
+                        <b>{element.name}</b>
+                        <span
+                            className={getStatusClass(data.data.status)}
+                        ></span>
+                    </p>
+                    <div className="top">
+                        {element.key === "constant" ? (
+                            <div
+                                style={{
+                                    border: "2px solid #ccc",
+                                    padding: 5,
+                                    fontFamily: "monospace",
+                                }}
+                            >
+                                <span>{data.data.value}</span>
+                            </div>
+                        ) : null}
+                        <div>
+                            {data.inputs.map((input) => {
+                                return (
+                                    <Pin
+                                        key={input}
+                                        pin={input}
+                                        nodeCoordinates={coordinates}
+                                    />
+                                );
+                            })}
                         </div>
-                    ) : null}
-                    <div>
-                        {data.inputs.map((input) => {
-                            return (
-                                <Pin
-                                    key={input}
-                                    pin={input}
-                                    nodeCoordinates={coordinates}
-                                />
-                            );
-                        })}
-                    </div>
-                    <div>
-                        {data.outputs.map((output) => {
-                            return (
-                                <Pin
-                                    key={output}
-                                    pin={output}
-                                    nodeCoordinates={coordinates}
-                                />
-                            );
-                        })}
-                    </div>
-                    {element.key === "display" ? (
-                        <div style={{ border: "2px solid #ccc", padding: 5 }}>
-                            <b>{data.data.value || "Value"}</b>
+                        <div>
+                            {data.outputs.map((output) => {
+                                return (
+                                    <Pin
+                                        key={output}
+                                        pin={output}
+                                        nodeCoordinates={coordinates}
+                                    />
+                                );
+                            })}
                         </div>
-                    ) : null}
+                        {element.key === "display" ? (
+                            <div
+                                style={{ border: "2px solid #ccc", padding: 5 }}
+                            >
+                                <b>{data.data.value || "Value"}</b>
+                            </div>
+                        ) : null}
+                    </div>
+                    <div className="bottom">
+                        <button onClick={openModal}>Data</button>
+                        <button onClick={deleteNode}>Delete</button>
+                    </div>
                 </div>
-                <div className="bottom">
-                    <button onClick={openModal}>Data</button>
-                    <button onClick={deleteNode}>Delete</button>
-                </div>
-            </div>
-            {dataModalOpen ? (
+            )}
+            {dataModalOpen && element ? (
                 <div style={styles.modal} onClick={closeModal}>
                     <div style={styles.modalInner} onClick={onClickModalInner}>
                         <h1>Edit node - {element.name}</h1>

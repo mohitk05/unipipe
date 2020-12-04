@@ -2,9 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 import { NodeType, InPinType, OutPinType } from "./../context/main";
 import { getElement } from "./element";
 
-export const createNode = (type: string) => {
+export const createNode = async (type: string) => {
     const nodeId = uuidv4();
-    const element = getElement(type);
+    const element = await getElement(type);
     const { inputs, outputs } = element.pinMapping;
     const inputInstances: InPinType[] = inputs.map((i) => ({
         ...i,
@@ -26,7 +26,9 @@ export const createNode = (type: string) => {
     };
 
     if (element.initialData) {
-        node.data = eval(`(${element.initialData})(node)`);
+        node.data = eval(
+            `(${element.initialData})(node, element.originalElement)`
+        );
     } else {
         node.data = {};
     }

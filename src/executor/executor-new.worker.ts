@@ -67,50 +67,35 @@ class ExecutorNode {
     }
 
     execute(scopeData: any) {
-        // const processor = globalElements[this.node.type].processor;
+        const processor = globalElements[this.node.type].processor;
         return new Promise(async (res, rej) => {
-            ctx.postMessage({
-                type: "update_node",
-                node: this.node.id,
-                update: {
-                    status: 1,
-                },
-            });
             try {
-                let url = "https://unipipe.free.beeceptor.com/execute";
-                if (this.node.type === "SCRIPT") {
-                    // data = await eval(
-                    //     `(${processor})({ ...scopeData, ctx, node: this.node })`
-                    // );
-                    url = "https://unipipe.free.beeceptor.com/execute-script";
-                }
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
+                ctx.postMessage({
+                    type: "update_node",
+                    node: this.node.id,
+                    update: {
+                        status: 1,
                     },
-                    body: JSON.stringify({
-                        input: scopeData,
-                        type: this.node.type,
-                    }),
-                }).then((res) => res.json());
-                console.log(response);
-                if (response.success) {
-                    let data = response.success.data;
-                    this.data = data;
-                    this.subscribers.forEach((s) => s());
-                    res(data);
-                    ctx.postMessage({
-                        type: "update_node",
-                        node: this.node.id,
-                        update: {
-                            status: 2,
-                        },
-                    });
-                } else {
-                    throw Error("Invalid response");
-                }
+                });
+                const data = await eval(
+                    `(${processor})({ ...scopeData, ctx, node: this.node })`
+                );
+                this.data = data;
+                this.subscribers.forEach((s) => s());
+                ctx.postMessage({
+                    type: "update_node",
+                    node: this.node.id,
+                    update: {
+                        status: 2,
+                    },
+                });
+                res(data);
             } catch (e) {
+                rej(
+                    `Error executing node - ${
+                        globalElements[this.node.type].type
+                    } (${this.node.id}). Message: ${e.message}`
+                );
                 ctx.postMessage({
                     type: "update_node",
                     node: this.node.id,
@@ -118,11 +103,6 @@ class ExecutorNode {
                         status: 3,
                     },
                 });
-                rej(
-                    `Error executing node - ${
-                        globalElements[this.node.type].type
-                    } (${this.node.id}). Message: ${e.message}`
-                );
             } finally {
                 this.isWaiting = false;
             }
@@ -215,7 +195,6 @@ const execute = (
                             globalElements[currentNode.getNode().type].type ==
                             "conditional"
                         ) {
-                            console.log({ data });
                             let next: string = "";
                             if (data.true) {
                                 next = currentNode.getNode().outputs[0];
