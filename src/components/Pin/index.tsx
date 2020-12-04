@@ -27,8 +27,8 @@ const Pin = (props: PinProps) => {
                 type: pin.type === 'in' ? 'UPDATE_INPUT_PIN_POSITION' : 'UPDATE_OUTPUT_PIN_POSITION',
                 data: {
                     pin: props.pin,
-                    x: props.nodeCoordinates.x + pinRef.current.offsetLeft + 12 + (pin.type === 'out' ? pinRef.current.offsetWidth : 0),
-                    y: props.nodeCoordinates.y + pinRef.current.offsetTop + pinRef.current.offsetHeight
+                    x: props.nodeCoordinates.x + pinRef.current.offsetLeft + (pin.type === 'out' ? pinRef.current.offsetWidth : 0),
+                    y: props.nodeCoordinates.y + pinRef.current.offsetTop - 14 + pinRef.current.offsetHeight
                 }
             })
         }
@@ -72,6 +72,7 @@ const Pin = (props: PinProps) => {
 
     const pinObject = getPin(props.pin);
 
+    console.log(pinObject)
     const getTag = (type: string) => {
         switch (type) {
             case 'in':
@@ -90,7 +91,7 @@ const Pin = (props: PinProps) => {
 
 const styles = {
     selected: {
-        background: 'salmon',
+        background: '#EBF2FF',
         color: 'white',
         padding: 4,
         borderRadius: 2

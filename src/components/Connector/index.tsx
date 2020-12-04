@@ -38,7 +38,7 @@ const Connector = (props: ConnectorProps) => {
     }, [])
 
     const getLineColor = useCallback(() => {
-        return getColor(props.to.id)
+        return '#45526C' //getColor(props.to.id)
     }, [props.to.id])
     if (!props.from.position || !props.to.position) return null;
     return <>
