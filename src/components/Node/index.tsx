@@ -3,6 +3,24 @@ import Pin from "./../Pin";
 import { NodeType, MainContext } from "../../context/main";
 import "./index.css";
 import { ElementType, getElement } from "../../util/element";
+import Edit from '../../assets/edit.svg'
+import Block from '../../assets/block.svg'
+import Code from '../../assets/code.svg'
+import Branch from '../../assets/branch.svg'
+import Cross from '../../assets/cross.svg'
+
+function getIcon(name: string) {
+    switch (name) {
+        case 'API':
+            return Block;
+        case 'display':
+            return Branch;
+        case 'SCRIPT':
+            return Code;
+        default:
+            return Branch;
+    }
+}
 
 const { useState, useRef, useContext } = React;
 
@@ -148,6 +166,7 @@ const Node = ({ data }: NodeProps) => {
                     onMouseDown={onMouseDown}
                     onMouseUp={onMouseUp}
                 >
+                    <div className='nodeHeader'>
                     <p
                         style={{
                             textAlign: "center",
@@ -157,11 +176,18 @@ const Node = ({ data }: NodeProps) => {
                             alignItems: "center",
                         }}
                     >
-                        <b>{element.name}</b>
                         <span
                             className={getStatusClass(data.data.status)}
                         ></span>
                     </p>
+                        <div style={{ width: "100%" }}>
+                            <img src={getIcon(element.key)} />&nbsp;<span>{element.name}</span>
+                            <div style={{ float: 'right' }}>
+                                {['SCRIPT'].includes(element.key) && <img onClick={openModal} src={Edit} />}&nbsp;<img onClick={deleteNode} src={Cross} />
+                            </div>
+                        </div>
+                    </div>
+                   
                     <div className="top">
                         {element.key === "constant" ? (
                             <div
@@ -204,10 +230,10 @@ const Node = ({ data }: NodeProps) => {
                             </div>
                         ) : null}
                     </div>
-                    <div className="bottom">
+                    {/* <div className="bottom">
                         <button onClick={openModal}>Data</button>
                         <button onClick={deleteNode}>Delete</button>
-                    </div>
+                    </div> */}
                 </div>
             )}
             {dataModalOpen && element ? (

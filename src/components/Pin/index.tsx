@@ -75,9 +75,9 @@ const Pin = (props: PinProps) => {
     const getTag = (type: string) => {
         switch (type) {
             case 'in':
-                return <span>-&nbsp;{pinObject.name}</span>
+                return <span style={{ textTransform: 'capitalize', ...styles.pinText }}>●&nbsp;&nbsp;{pinObject.name}</span>
             case 'out':
-                return <span>{pinObject.name}&nbsp;-</span>
+                return <span style={{ textTransform: 'capitalize', ...styles.pinText }}>{pinObject.name}&nbsp;&nbsp;●</span>
             default:
                 return <span>invalid!</span>
         }
@@ -94,6 +94,13 @@ const styles = {
         color: 'white',
         padding: 4,
         borderRadius: 2
+    },
+    pinText: {
+        width: '44px',
+        height: '20px',
+        fontSize: '13px',
+        lineHeight: '150%',
+        color: '#45526C',
     }
 }
 
