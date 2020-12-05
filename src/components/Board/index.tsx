@@ -46,6 +46,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         padding: 16,
         width: "100%",
         position: "relative",
+        overflow:'scroll'
     },
     svgParent: {
         position: "absolute",
