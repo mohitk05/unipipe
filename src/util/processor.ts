@@ -1,3 +1,5 @@
+import { type } from "os";
+
 const processors: { [key: string]: (param: any) => any } = {
     add: ({ input1, input2 }) => {
         return { sum: input1 + input2 };
@@ -73,7 +75,7 @@ const processors: { [key: string]: (param: any) => any } = {
             headers: node.data.headers,
             json:
                 node.data.apiType === "POST"
-                    ? input || node.data.inputJson
+                    ? JSON.stringify(input) || node.data.inputJson
                     : "",
         };
         return await fetch("http://3.235.176.40:8080/api-execute", {
@@ -92,9 +94,32 @@ const processors: { [key: string]: (param: any) => any } = {
             });
     },
     SCRIPT: async ({ input1, input2, node, ctx }) => {
+        let parsed1, parsed2;
+        if (typeof input1 === "string") {
+            try {
+                parsed1 = JSON.parse(input1);
+            } catch (e) {
+                parsed1 = input1;
+            }
+        } else {
+            parsed1 = input1;
+        }
+        if (typeof input2 === "string") {
+            try {
+                parsed2 = JSON.parse(input2);
+            } catch (e) {
+                parsed2 = input2;
+            }
+        } else {
+            parsed2 = input2;
+        }
+        let combinedInput = {
+            input1: parsed1,
+            input2: parsed2,
+        };
         let body = {
             source: node.data.inputCode,
-            input: typeof input1 === "string" ? input1 : JSON.stringify(input1),
+            input: JSON.stringify(combinedInput),
         };
         return await fetch(
             "http://3.235.176.40:8080/script-execute/string-to-file",

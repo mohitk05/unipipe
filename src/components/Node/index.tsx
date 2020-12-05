@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import Pin from "./../Pin";
 import { NodeType, MainContext } from "../../context/main";
 import "./index.css";
@@ -153,6 +154,16 @@ const Node = ({ data }: NodeProps) => {
         });
     };
 
+    const getPortalElement = () => {
+        let el = document.getElementById("codebox-div");
+        if (!el) {
+            el = document.createElement("div");
+            el.id = "codebox-div";
+            document.body.appendChild(el);
+        }
+        return el;
+    };
+
     return (
         <div
             ref={nodeRef}
@@ -207,7 +218,12 @@ const Node = ({ data }: NodeProps) => {
                                     fontFamily: "monospace",
                                 }}
                             >
-                                <span>{data.data.value}</span>
+                                <span>
+                                    {JSON.stringify(data.data.value).slice(
+                                        0,
+                                        20
+                                    )}
+                                </span>
                             </div>
                         ) : null}
                         <div>
@@ -266,28 +282,37 @@ const Node = ({ data }: NodeProps) => {
                     </div> */}
                 </div>
             )}
-            {dataModalOpen && element ? (
-                <div style={styles.modal} onClick={closeModal}>
-                    <div style={styles.modalInner} onClick={onClickModalInner}>
-                        <div style={styles.modalHeader}>
-                            <span>
-                                {" "}
-                                {">"}_&nbsp;&nbsp;Editor - {element.name}
-                            </span>
-                            <div style={styles.modalHeaderRight}>
-                                <div
-                                    onClick={saveUpdatedData}
-                                    style={styles.modalSaveButton}
-                                >
-                                    Save Changes
-                                </div>
-                                <img onClick={closeModal} src={Cross} />
-                            </div>
-                        </div>
-                        <CodeBox value={modalData} onChange={updateModalData} />
-                    </div>
-                </div>
-            ) : null}
+            {dataModalOpen && element
+                ? ReactDOM.createPortal(
+                      <div style={styles.modal} onClick={closeModal}>
+                          <div
+                              style={styles.modalInner}
+                              onClick={onClickModalInner}
+                          >
+                              <div style={styles.modalHeader}>
+                                  <span>
+                                      {" "}
+                                      {">"}_&nbsp;&nbsp;Editor - {element.name}
+                                  </span>
+                                  <div style={styles.modalHeaderRight}>
+                                      <div
+                                          onClick={saveUpdatedData}
+                                          style={styles.modalSaveButton}
+                                      >
+                                          Save Changes
+                                      </div>
+                                      <img onClick={closeModal} src={Cross} />
+                                  </div>
+                              </div>
+                              <CodeBox
+                                  value={modalData}
+                                  onChange={updateModalData}
+                              />
+                          </div>
+                      </div>,
+                      getPortalElement()
+                  )
+                : null}
         </div>
     );
 };
@@ -330,7 +355,7 @@ const styles = {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 2,
+        zIndex: 4,
         flexDirection: "column" as "column",
     },
     modalHeader: {

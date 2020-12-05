@@ -17,7 +17,6 @@ import Document from "../../assets/document.svg";
 import Wand from "../../assets/wand.svg";
 import Share from "../../assets/share.svg";
 import Save from "../../assets/save.svg";
-import ChevronDown from "../../assets/chevronDown.svg";
 import ElementList from "../ElementList";
 
 const middleNav = [
@@ -38,6 +37,7 @@ const HeaderModule = () => {
     } = useContext(MainContext);
     const { nodes, inputPins, outputPins, headNode } = board;
     const [explorerOpen, setExplorerOpen] = React.useState(false);
+    const [saveText, setSaveText] = React.useState("Save Flow");
 
     useEffect(() => {
         executor.addEventListener("message", (e: MessageEvent) => {
@@ -73,28 +73,45 @@ const HeaderModule = () => {
     };
 
     const saveRecipe = () => {
-        // Replace with server call
-        localStorage.setItem("recipe_" + uuidv4(), JSON.stringify(board));
-    };
-
-    const loadRecipe = () => {
-        const recipe = localStorage.getItem(
-            "recipe_922c6adb-1c70-4b51-b895-e55e59eb8e14"
-        );
-        if (recipe) {
-            let recipe_state = JSON.parse(recipe);
-            dispatch({
-                type: "LOAD_RECIPE",
-                data: {
-                    state: recipe_state,
-                },
+        fetch("http://3.235.176.40:8080/flow", {
+            method: "POST",
+            body: JSON.stringify({
+                userId: 1,
+                uuid: 1000,
+                name: "My first flow",
+                flowJson: JSON.stringify(JSON.stringify(board)),
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                setSaveText("Saved!");
+                setTimeout(() => {
+                    setSaveText("Save Flow");
+                }, 5000);
             });
-        }
     };
 
     const openBlocksExplorer = () => {
         setExplorerOpen(true);
     };
+
+    // const loadRecipe = () => {
+    //     const recipe = localStorage.getItem(
+    //         "recipe_922c6adb-1c70-4b51-b895-e55e59eb8e14"
+    //     );
+    //     if (recipe) {
+    //         let recipe_state = JSON.parse(recipe);
+    //         dispatch({
+    //             type: "LOAD_RECIPE",
+    //             data: {
+    //                 state: recipe_state,
+    //             },
+    //         });
+    //     }
+    // };
 
     return (
         <div className="header">
@@ -152,29 +169,28 @@ const HeaderModule = () => {
                             className="button exportButton"
                         >
                             <img src={Save} />
-                            <span>Export</span>
-                            <img src={ChevronDown} />
+                            <span>{saveText}</span>
                         </div>
-                    </div>
-                    {explorerOpen && (
-                        <div
-                            style={{
-                                position: "absolute",
-                                left: 0,
-                                top: 0,
-                                width: "100%",
-                            }}
-                        >
-                            <div className="blocksModal">
-                                <div>
-                                    <ElementList
-                                        close={() => setExplorerOpen(false)}
-                                    />
+                        {explorerOpen && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    left: 0,
+                                    top: 0,
+                                    width: "100%",
+                                }}
+                            >
+                                <div className="blocksModal">
+                                    <div>
+                                        <ElementList
+                                            close={() => setExplorerOpen(false)}
+                                        />
+                                    </div>
                                 </div>
+                                <div className="blocksModalOverlay"></div>
                             </div>
-                            <div className="blocksModalOverlay"></div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </>
             )}
         </div>
