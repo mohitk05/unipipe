@@ -158,8 +158,24 @@ export const pinMapping: PinMapping = {
         ],
         outputs: [],
     },
+    html: {
+        inputs: [
+            {
+                type: "in",
+                label: "input",
+                name: "input",
+            },
+        ],
+        outputs: [],
+    },
     API: {
-        inputs: [],
+        inputs: [
+            {
+                type: "in",
+                label: "Body",
+                name: "input",
+            },
+        ],
         outputs: [
             {
                 type: "out",
@@ -198,6 +214,7 @@ export const elements: {
     processor?: string;
     pinMapping: InputOutput;
     initialData?: (node: NodeType) => object;
+    description: string;
 }[] = [
     // {
     //     key: "add",
@@ -227,16 +244,17 @@ export const elements: {
     //     processor: getProcessor("conditional"),
     //     pinMapping: pinMapping["conditional"],
     // },
-    // {
-    //     key: "constant",
-    //     type: "constant",
-    //     name: "Constant",
-    //     initialData: () => {
-    //         return { value: 4 };
-    //     },
-    //     processor: getProcessor("constant"),
-    //     pinMapping: pinMapping["constant"],
-    // },
+    {
+        key: "constant",
+        type: "constant",
+        name: "Constant",
+        initialData: () => {
+            return { value: "" };
+        },
+        processor: getProcessor("constant"),
+        pinMapping: pinMapping["constant"],
+        description: "Provides a constant value at its output",
+    },
     // {
     //     key: "regex",
     //     type: "regex",
@@ -268,6 +286,20 @@ export const elements: {
                 node: node.id,
             };
         },
+        description: "Displays the value of the input provided",
+    },
+    {
+        key: "html",
+        type: "sink",
+        name: "HTML Output",
+        processor: getProcessor("html"),
+        pinMapping: pinMapping["html"],
+        initialData: (node: NodeType) => {
+            return {
+                node: node.id,
+            };
+        },
+        description: "Renders the HTML provided as input",
     },
 ];
 
@@ -327,9 +359,7 @@ export const getAllElements = async (): Promise<{
     if (elements) {
         return Promise.resolve(JSON.parse(elements));
     } else {
-        return await fetch(
-            "https://run.mocky.io/v3/bb51e1c3-ce44-439f-af36-58c7cc37e3d9"
-        )
+        return await fetch("http://3.235.176.40:8080/blocks")
             .then((res) => res.json())
             .then((res: ElementResponseStructure[]) => {
                 let modified = saveElements(res);

@@ -2,12 +2,13 @@ import * as React from "react";
 import { MainContext } from "../../context/main";
 import { createNode } from "./../../util/node";
 import { ElementType } from "./../../util/element";
-import { AppstoreAddOutlined } from "@ant-design/icons";
+import "./index.css";
 interface ElementProps {
     data: ElementType;
+    onAdded: () => void;
 }
 
-const Element = ({ data }: ElementProps) => {
+const Element = ({ data, onAdded }: ElementProps) => {
     const { dispatch } = React.useContext(MainContext);
 
     const addElementToBoard = async () => {
@@ -30,22 +31,24 @@ const Element = ({ data }: ElementProps) => {
                 pins: outputPins,
             },
         });
+        onAdded();
     };
 
     return (
-        <div onClick={addElementToBoard} style={styles.element}>
-            <p style={{ margin: 0 }}>{data.name}</p>
-            <AppstoreAddOutlined />
+        <div style={styles.element}>
+            <h2 style={{ margin: 0 }}>{data.name}</h2>
+            <p>
+                {data.description || "No description available for this block."}
+            </p>
+            <button className="addToBoardButton" onClick={addElementToBoard}>
+                Add to board
+            </button>
         </div>
     );
 };
 
 const styles = {
     element: {
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
         width: "100%",
     },
 };

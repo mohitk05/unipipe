@@ -95,3 +95,39 @@
     line-height: 150%;
     color: #6a3ded;
 }
+
+.blocksModal {
+    position: absolute;
+    margin-top: 8%;
+    left: 20%;
+    z-index: 10;
+    background: white;
+    width: 800px;
+    height: 500px;
+    box-shadow: 0px 6px 10px rgba(51, 54, 68, 0.05),
+        0px 10px 16px rgba(51, 54, 68, 0.15);
+    border-radius: 12px;
+}
+
+.blocksModalOverlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    width: 100vw;
+    height: 100vh;
+    background: rgb(0, 0, 0, 0.2);
+}
+
+.blockModalClose {
+    display: block;
+    float: right;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    border: none;
+    background: #ebf2ff;
+    border-radius: 2px;
+    padding: 5px 10px;
+    width: 100px;
+    cursor: pointer;
+}

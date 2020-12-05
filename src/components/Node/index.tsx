@@ -3,20 +3,20 @@ import Pin from "./../Pin";
 import { NodeType, MainContext } from "../../context/main";
 import "./index.css";
 import { ElementType, getElement } from "../../util/element";
-import Edit from '../../assets/edit.svg'
-import Block from '../../assets/block.svg'
-import Code from '../../assets/code.svg'
-import Branch from '../../assets/branch.svg'
-import Cross from '../../assets/cross.svg'
-import CodeBox from '../CodeBox';
+import Edit from "../../assets/edit.svg";
+import Block from "../../assets/block.svg";
+import Code from "../../assets/code.svg";
+import Branch from "../../assets/branch.svg";
+import Cross from "../../assets/cross.svg";
+import CodeBox from "../CodeBox";
 
 function getIcon(name: string) {
     switch (name) {
-        case 'API':
+        case "API":
             return Block;
-        case 'display':
+        case "display":
             return Branch;
-        case 'SCRIPT':
+        case "SCRIPT":
             return Code;
         default:
             return Branch;
@@ -156,7 +156,11 @@ const Node = ({ data }: NodeProps) => {
     return (
         <div
             ref={nodeRef}
-            className="nodeContainer"
+            className={
+                element && /display|html|html/.test(element.key)
+                    ? "nodeContainer containerDisplay"
+                    : "nodeContainer"
+            }
             style={{
                 ...getStyles(coordinates.x, coordinates.y, dataModalOpen),
             }}
@@ -167,7 +171,7 @@ const Node = ({ data }: NodeProps) => {
                     onMouseDown={onMouseDown}
                     onMouseUp={onMouseUp}
                 >
-                    <div className='nodeHeader'>
+                    <div className="nodeHeader">
                         <p
                             style={{
                                 textAlign: "center",
@@ -182,9 +186,14 @@ const Node = ({ data }: NodeProps) => {
                             ></span>
                         </p>
                         <div style={{ width: "100%" }}>
-                            <img src={getIcon(element.key)} />&nbsp;<span>{element.name}</span>
-                            <div style={{ float: 'right' }}>
-                                {['SCRIPT'].includes(element.key) && <img onClick={openModal} src={Edit} />}&nbsp;<img onClick={deleteNode} src={Cross} />
+                            <img src={getIcon(element.key)} />
+                            &nbsp;<span>{element.name}</span>
+                            <div style={{ float: "right" }}>
+                                {/* {["SCRIPT"].includes(element.key) && ( */}
+                                <img onClick={openModal} src={Edit} />
+                                {/* )} */}
+                                &nbsp;&nbsp;
+                                <img onClick={deleteNode} src={Cross} />
                             </div>
                         </div>
                     </div>
@@ -223,30 +232,55 @@ const Node = ({ data }: NodeProps) => {
                                 );
                             })}
                         </div>
-                        {element.key === "display" ? (
-                            <div
-                                style={{ border: "2px solid #ccc", padding: 5 }}
-                            >
-                                <b>
-                                    {data.data.value
-                                        ? JSON.stringify(data.data.value).slice(
-                                              0,
-                                              30
-                                          )
-                                        : "Value"}
-                                </b>
-                            </div>
-                        ) : null}
                     </div>
+                    {element.key === "display" ? (
+                        <div
+                            style={{
+                                padding: 10,
+                                height: "auto",
+                                width: "100%",
+                                overflow: "auto",
+                                fontFamily: "Menlo",
+                                fontSize: "0.7rem",
+                                whiteSpace: "pre-wrap",
+                            }}
+                        >
+                            <pre>
+                                {data.data.value
+                                    ? JSON.stringify(data.data.value, null, 2)
+                                    : "Value"}
+                            </pre>
+                        </div>
+                    ) : null}
+                    {element.key === "html" ? (
+                        <div
+                            style={{ margin: "5px 10px" }}
+                            dangerouslySetInnerHTML={{
+                                __html: data.data.value,
+                            }}
+                        ></div>
+                    ) : null}
+                    {/* <div className="bottom">
+                        <button onClick={openModal}>Data</button>
+                        <button onClick={deleteNode}>Delete</button>
+                    </div> */}
                 </div>
             )}
             {dataModalOpen && element ? (
                 <div style={styles.modal} onClick={closeModal}>
                     <div style={styles.modalInner} onClick={onClickModalInner}>
                         <div style={styles.modalHeader}>
-                            <span> {'>'}_&nbsp;&nbsp;Editor - {element.name}</span>
+                            <span>
+                                {" "}
+                                {">"}_&nbsp;&nbsp;Editor - {element.name}
+                            </span>
                             <div style={styles.modalHeaderRight}>
-                                <div onClick={saveUpdatedData} style={styles.modalSaveButton}>Save Changes</div>
+                                <div
+                                    onClick={saveUpdatedData}
+                                    style={styles.modalSaveButton}
+                                >
+                                    Save Changes
+                                </div>
                                 <img onClick={closeModal} src={Cross} />
                             </div>
                         </div>
@@ -297,40 +331,40 @@ const styles = {
         justifyContent: "center",
         alignItems: "center",
         zIndex: 2,
-        flexDirection: 'column' as 'column'
+        flexDirection: "column" as "column",
     },
     modalHeader: {
         width: 800,
         height: 40,
-        color: '#FFFFFF',
+        color: "#FFFFFF",
         fontSize: 15,
-        lineHeight: '150%',
+        lineHeight: "150%",
         fontWeight: 600,
-        padding: '8px 20px 8px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        padding: "8px 20px 8px 20px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     modalHeaderRight: {
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center'
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
     },
     modalInner: {
         borderRadius: 10,
         width: 800,
         height: 414.14,
-        background: '#06132A',
-        overflow: 'hidden'
+        background: "#06132A",
+        overflow: "hidden",
     },
     modalSaveButton: {
         width: 119,
         height: 25,
         opacity: 0.7,
-        background: '#4F8AFB',
+        background: "#4F8AFB",
         fontSize: 15,
-        lineHeight: '150%',
-        color: '#FFFFFF',
+        lineHeight: "150%",
+        color: "#FFFFFF",
         borderRadius: 4,
         textAlign: "center" as "center",
         marginRight: 20,

@@ -1,0 +1,8 @@
+.addToBoardButton {
+    display: block;
+    border: none;
+    background: #ebf2ff;
+    border-radius: 2px;
+    padding: 5px 10px;
+    cursor: pointer;
+}

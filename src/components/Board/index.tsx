@@ -3,7 +3,7 @@ import Node from "./../Node";
 import { MainContext } from "../../context/main";
 import Connector from "../Connector";
 
-const { useContext } = React
+const { useContext } = React;
 const Board = () => {
     const {
         state: { board },
@@ -46,7 +46,8 @@ const styles: { [key: string]: React.CSSProperties } = {
         padding: 16,
         width: "100%",
         position: "relative",
-        overflow:'scroll'
+        overflow: "scroll",
+        zoom: 0.7,
     },
     svgParent: {
         position: "absolute",
@@ -55,7 +56,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         height: "100%",
         width: "100%",
         zIndex: 1,
-    }
+    },
 };
 
 export default Board;
