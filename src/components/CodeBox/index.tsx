@@ -1,35 +1,26 @@
 import * as React from "react";
 import AceEditor from "react-ace";
+import './index.css';
 
 const CodeBox = (props: any) => {
-    const [code, setCode] = React.useState("");
-
-    function handleChange(params: any) {
-        setCode(params);
-    }
-
-    return (
-        <div style={{ padding: 10 }}>
-            <AceEditor
-                placeholder="Write your code here"
-                mode="javascript"
-                name="test"
-                onChange={handleChange}
-                fontSize={12}
-                showPrintMargin={true}
-                showGutter={true}
-                highlightActiveLine={true}
-                value={code}
-                setOptions={{
-                    enableBasicAutocompletion: true,
-                    enableLiveAutocompletion: true,
-                    enableSnippets: true,
-                    showLineNumbers: true,
-                    tabSize: 2,
-                }}
-            />
-        </div>
-    );
-};
+    return <AceEditor
+        style={{ background: '#091E42', width: 'auto', height: 375, color: 'white' }}
+        placeholder="Write your code here"
+        mode="javascript"
+        name="test"
+        onChange={props.onChange}
+        fontSize={12}
+        showPrintMargin={false}
+        showGutter={true}
+        highlightActiveLine={true}
+        value={props.value}
+        setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+            showLineNumbers: true,
+            tabSize: 2,
+        }} />
+}
 
 export default CodeBox;

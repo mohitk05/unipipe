@@ -1,0 +1,11 @@
+.ace_hidpi .ace_text-layer,
+.ace_hidpi .ace_gutter-layer,
+.ace_hidpi .ace_content,
+.ace_hidpi .ace_gutter {
+    background: #091E42;
+    color: white;
+}
+
+.ace-tm .ace_gutter-active-line {
+    background-color: unset;
+}

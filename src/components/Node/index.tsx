@@ -2,12 +2,13 @@ import * as React from "react";
 import Pin from "./../Pin";
 import { NodeType, MainContext } from "../../context/main";
 import "./index.css";
-import { elements, ElementType, getElement } from "../../util/element";
+import { ElementType, getElement } from "../../util/element";
 import Edit from "../../assets/edit.svg";
 import Block from "../../assets/block.svg";
 import Code from "../../assets/code.svg";
 import Branch from "../../assets/branch.svg";
 import Cross from "../../assets/cross.svg";
+import CodeBox from "../CodeBox";
 
 function getIcon(name: string) {
     switch (name) {
@@ -64,8 +65,8 @@ const Node = ({ data }: NodeProps) => {
         e.stopPropagation();
     };
 
-    const updateModalData = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setModalData(e.target.value);
+    const updateModalData = (data: string) => {
+        setModalData(data);
     };
 
     const saveUpdatedData = () => {
@@ -268,13 +269,22 @@ const Node = ({ data }: NodeProps) => {
             {dataModalOpen && element ? (
                 <div style={styles.modal} onClick={closeModal}>
                     <div style={styles.modalInner} onClick={onClickModalInner}>
-                        <h1>Edit node - {element.name}</h1>
-                        <textarea
-                            style={styles.inputArea}
-                            value={modalData}
-                            onChange={updateModalData}
-                        />
-                        <button onClick={saveUpdatedData}>Save</button>
+                        <div style={styles.modalHeader}>
+                            <span>
+                                {" "}
+                                {">"}_&nbsp;&nbsp;Editor - {element.name}
+                            </span>
+                            <div style={styles.modalHeaderRight}>
+                                <div
+                                    onClick={saveUpdatedData}
+                                    style={styles.modalSaveButton}
+                                >
+                                    Save Changes
+                                </div>
+                                <img onClick={closeModal} src={Cross} />
+                            </div>
+                        </div>
+                        <CodeBox value={modalData} onChange={updateModalData} />
                     </div>
                 </div>
             ) : null}
@@ -321,12 +331,43 @@ const styles = {
         justifyContent: "center",
         alignItems: "center",
         zIndex: 2,
+        flexDirection: "column" as "column",
+    },
+    modalHeader: {
+        width: 800,
+        height: 40,
+        color: "#FFFFFF",
+        fontSize: 15,
+        lineHeight: "150%",
+        fontWeight: 600,
+        padding: "8px 20px 8px 20px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    modalHeaderRight: {
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
     },
     modalInner: {
-        width: 500,
-        background: "white",
+        borderRadius: 10,
+        width: 800,
+        height: 414.14,
+        background: "#06132A",
+        overflow: "hidden",
+    },
+    modalSaveButton: {
+        width: 119,
+        height: 25,
+        opacity: 0.7,
+        background: "#4F8AFB",
+        fontSize: 15,
+        lineHeight: "150%",
+        color: "#FFFFFF",
         borderRadius: 4,
-        padding: 16,
+        textAlign: "center" as "center",
+        marginRight: 20,
     },
     inputArea: {
         fontFamily: "Menlo, monospace",
