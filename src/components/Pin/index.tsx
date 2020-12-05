@@ -98,7 +98,7 @@ const Pin = (props: PinProps) => {
                             ...styles.pinText,
                         }}
                     >
-                        ●&nbsp;&nbsp;{pinObject.name}
+                        ●&nbsp;&nbsp;{pinObject.label}
                     </span>
                 );
             case "out":
@@ -109,7 +109,7 @@ const Pin = (props: PinProps) => {
                             ...styles.pinText,
                         }}
                     >
-                        {pinObject.name}&nbsp;&nbsp;●
+                        {pinObject.label}&nbsp;&nbsp;●
                     </span>
                 );
             default:

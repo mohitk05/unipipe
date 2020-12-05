@@ -2,20 +2,20 @@ import * as React from "react";
 import Pin from "./../Pin";
 import { NodeType, MainContext } from "../../context/main";
 import "./index.css";
-import { ElementType, getElement } from "../../util/element";
-import Edit from '../../assets/edit.svg'
-import Block from '../../assets/block.svg'
-import Code from '../../assets/code.svg'
-import Branch from '../../assets/branch.svg'
-import Cross from '../../assets/cross.svg'
+import { elements, ElementType, getElement } from "../../util/element";
+import Edit from "../../assets/edit.svg";
+import Block from "../../assets/block.svg";
+import Code from "../../assets/code.svg";
+import Branch from "../../assets/branch.svg";
+import Cross from "../../assets/cross.svg";
 
 function getIcon(name: string) {
     switch (name) {
-        case 'API':
+        case "API":
             return Block;
-        case 'display':
+        case "display":
             return Branch;
-        case 'SCRIPT':
+        case "SCRIPT":
             return Code;
         default:
             return Branch;
@@ -155,7 +155,11 @@ const Node = ({ data }: NodeProps) => {
     return (
         <div
             ref={nodeRef}
-            className="nodeContainer"
+            className={
+                element && /display|html|html/.test(element.key)
+                    ? "nodeContainer containerDisplay"
+                    : "nodeContainer"
+            }
             style={{
                 ...getStyles(coordinates.x, coordinates.y, dataModalOpen),
             }}
@@ -166,28 +170,33 @@ const Node = ({ data }: NodeProps) => {
                     onMouseDown={onMouseDown}
                     onMouseUp={onMouseUp}
                 >
-                    <div className='nodeHeader'>
-                    <p
-                        style={{
-                            textAlign: "center",
-                            margin: "10px 5px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}
-                    >
-                        <span
-                            className={getStatusClass(data.data.status)}
-                        ></span>
-                    </p>
+                    <div className="nodeHeader">
+                        <p
+                            style={{
+                                textAlign: "center",
+                                margin: "10px 5px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                            }}
+                        >
+                            <span
+                                className={getStatusClass(data.data.status)}
+                            ></span>
+                        </p>
                         <div style={{ width: "100%" }}>
-                            <img src={getIcon(element.key)} />&nbsp;<span>{element.name}</span>
-                            <div style={{ float: 'right' }}>
-                                {['SCRIPT'].includes(element.key) && <img onClick={openModal} src={Edit} />}&nbsp;<img onClick={deleteNode} src={Cross} />
+                            <img src={getIcon(element.key)} />
+                            &nbsp;<span>{element.name}</span>
+                            <div style={{ float: "right" }}>
+                                {/* {["SCRIPT"].includes(element.key) && ( */}
+                                <img onClick={openModal} src={Edit} />
+                                {/* )} */}
+                                &nbsp;&nbsp;
+                                <img onClick={deleteNode} src={Cross} />
                             </div>
                         </div>
                     </div>
-                   
+
                     <div className="top">
                         {element.key === "constant" ? (
                             <div
@@ -222,21 +231,34 @@ const Node = ({ data }: NodeProps) => {
                                 );
                             })}
                         </div>
-                        {element.key === "display" ? (
-                            <div
-                                style={{ border: "2px solid #ccc", padding: 5 }}
-                            >
-                                <b>
-                                    {data.data.value
-                                        ? JSON.stringify(data.data.value).slice(
-                                              0,
-                                              30
-                                          )
-                                        : "Value"}
-                                </b>
-                            </div>
-                        ) : null}
                     </div>
+                    {element.key === "display" ? (
+                        <div
+                            style={{
+                                padding: 10,
+                                height: "auto",
+                                width: "100%",
+                                overflow: "auto",
+                                fontFamily: "Menlo",
+                                fontSize: "0.7rem",
+                                whiteSpace: "pre-wrap",
+                            }}
+                        >
+                            <pre>
+                                {data.data.value
+                                    ? JSON.stringify(data.data.value, null, 2)
+                                    : "Value"}
+                            </pre>
+                        </div>
+                    ) : null}
+                    {element.key === "html" ? (
+                        <div
+                            style={{ margin: "5px 10px" }}
+                            dangerouslySetInnerHTML={{
+                                __html: data.data.value,
+                            }}
+                        ></div>
+                    ) : null}
                     {/* <div className="bottom">
                         <button onClick={openModal}>Data</button>
                         <button onClick={deleteNode}>Delete</button>

@@ -56,12 +56,25 @@ const processors: { [key: string]: (param: any) => any } = {
         });
         console.log(input);
     },
-    API: async ({ node, ctx }) => {
+    html: async ({ input, node, ctx }) => {
+        ctx.postMessage({
+            type: "update_node",
+            node: node.id,
+            update: {
+                value: input,
+            },
+        });
+        console.log(input);
+    },
+    API: async ({ input, node, ctx }) => {
         let body = {
             apiType: node.data.apiType,
             url: node.data.url,
             headers: node.data.headers,
-            json: node.data.apiType === "POST" ? node.data.inputJson : "",
+            json:
+                node.data.apiType === "POST"
+                    ? input || node.data.inputJson
+                    : "",
         };
         return await fetch("http://3.235.176.40:8080/api-execute", {
             method: "POST",
@@ -73,6 +86,9 @@ const processors: { [key: string]: (param: any) => any } = {
             .then((res) => res.json())
             .then((res) => {
                 return { out: res.data };
+            })
+            .catch((err) => {
+                throw Error(err);
             });
     },
     SCRIPT: async ({ input1, input2, node, ctx }) => {

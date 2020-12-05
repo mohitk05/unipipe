@@ -2,3 +2,35 @@ ul {
     overflow: scroll;
     height: 100%;
 }
+
+.elementsList {
+    display: flex;
+}
+
+.elementsListLeft {
+    width: 240px;
+    border-right: 1px solid #dfe1e6;
+    flex-shrink: 0;
+    height: 442px;
+}
+
+.elementName {
+    color: #45526c;
+    cursor: pointer;
+    width: 224px;
+    height: 48px;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+}
+
+.elementNameSelected {
+    color: white;
+    background: #4f8afb;
+    border-radius: 6px;
+}
+
+.elementsListRight {
+    flex: 0.7;
+    padding-left: 32px;
+}
