@@ -29,6 +29,8 @@
     align-items: center;
     font-weight: 600;
     padding: 0px 10px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .top,

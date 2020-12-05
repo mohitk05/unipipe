@@ -9,7 +9,7 @@ const LandingPage = () => {
     const [isLoading, setIsLoading] = React.useState(true)
 
     React.useEffect(() => {
-        axios.get('https://5fc9f0533c1c2200164414bd.mockapi.io/stories').then((res) => {
+        axios.get('http://3.235.176.40:8080/templates').then((res) => {
             setStories(res.data)
         })
             .catch((error) => {
@@ -49,13 +49,13 @@ const LandingPage = () => {
                                     <img
                                         style={{ borderStartStartRadius: 3 }}
                                         alt="example"
-                                        src={item.cover}
+                                        src={'https://picsum.photos/220/165'}
                                     />
                                 }
                             >
                                 <Meta
-                                    title={item.title}
-                                    description={item.description}
+                                    title={item.blockType}
+                                    description={item.requestType}
                                 />
                             </Card>
                         </Link>
