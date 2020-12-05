@@ -82,14 +82,14 @@ const Node = ({ data }: NodeProps) => {
     const saveUpdatedData = (element: ElementType) => {
         try {
             let updatedData;
-            if (element.key === "API") {
-                updatedData = JSON.parse(modalData);
-            } else if (element.key === "SCRIPT") {
+            if (element.key === "SCRIPT") {
                 updatedData = {
                     inputCode: modalData,
                     arguments: "",
                     status: 0,
                 };
+            } else {
+                updatedData = JSON.parse(modalData);
             }
             dispatch({
                 type: "UPDATE_NODE_DATA",
@@ -221,9 +221,9 @@ const Node = ({ data }: NodeProps) => {
                             <img src={getIcon(element.key)} />
                             &nbsp;<span>{element.name}</span>
                             <div style={{ float: "right" }}>
-                                {["SCRIPT", "API"].includes(element.key) && (
-                                    <img onClick={openModal} src={Edit} />
-                                )}
+                                {["SCRIPT", "API", "constant"].includes(
+                                    element.key
+                                ) && <img onClick={openModal} src={Edit} />}
                                 &nbsp;
                                 <img onClick={deleteNode} src={Cross} />
                             </div>
