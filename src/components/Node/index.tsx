@@ -200,7 +200,14 @@ const Node = ({ data }: NodeProps) => {
                             <div
                                 style={{ border: "2px solid #ccc", padding: 5 }}
                             >
-                                <b>{data.data.value || "Value"}</b>
+                                <b>
+                                    {data.data.value
+                                        ? JSON.stringify(data.data.value).slice(
+                                              0,
+                                              30
+                                          )
+                                        : "Value"}
+                                </b>
                             </div>
                         ) : null}
                     </div>

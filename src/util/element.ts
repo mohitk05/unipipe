@@ -295,7 +295,7 @@ export const saveElements = (
                     let data: any = {};
                     if (el.blockType === "API") {
                         data.url = el.url;
-                        data.requestType = el.requestType;
+                        data.apiType = el.apiType;
                         data.inputJson = el.inputJson || "";
                     } else if (el.blockType === "SCRIPT") {
                         data.inputCode = el.inputCode;

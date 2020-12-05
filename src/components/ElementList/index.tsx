@@ -6,7 +6,7 @@ import { List } from "antd";
 export interface ElementResponseStructure {
     id: number;
     blockType: string;
-    requestType: string | null;
+    apiType: string | null;
     url: string | null;
     blockName: string;
     blockDescription: string;
