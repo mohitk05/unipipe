@@ -3,12 +3,14 @@ import Pin from "./../Pin";
 import { NodeType, MainContext } from "../../context/main";
 import "./index.css";
 import { ElementType, getElement } from "../../util/element";
-import Edit from "../../assets/edit.svg";
-import Block from "../../assets/block.svg";
-import Code from "../../assets/code.svg";
-import Branch from "../../assets/branch.svg";
-import Cross from "../../assets/cross.svg";
-import CodeBox from "../CodeBox";
+import Edit from '../../assets/edit.svg'
+import Block from '../../assets/block.svg'
+import Code from '../../assets/code.svg'
+import Branch from '../../assets/branch.svg'
+import Cross from '../../assets/cross.svg'
+import CodeBox from '../CodeBox';
+import { notification } from 'antd';
+import Chart from '../Chart'
 
 function getIcon(name: string) {
     switch (name) {
@@ -35,9 +37,7 @@ const Node = ({ data }: NodeProps) => {
     );
     const [dataModalOpen, setDataModalOpen] = useState(false);
     const [element, setElement] = useState<ElementType>();
-    const [modalData, setModalData] = useState(
-        data.data ? JSON.stringify(data.data, null, 4) : ""
-    );
+    const [modalData, setModalData] = useState<any>();
     const {
         state: {
             board: { inputPins, outputPins },
@@ -47,9 +47,18 @@ const Node = ({ data }: NodeProps) => {
     const nodeRef = useRef<HTMLDivElement>(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
 
+    function setInitialModalData(element: ElementType) {
+        if (element.key === 'SCRIPT') {
+            setModalData(data.data.inputCode)
+        } else {
+            setModalData(data.data ? JSON.stringify(data.data, null, 4) : "")
+        }
+    }
+
     React.useEffect(() => {
         getElement(data.type).then((el) => {
             setElement(el);
+            setInitialModalData(el);
         });
     }, []);
 
@@ -69,9 +78,18 @@ const Node = ({ data }: NodeProps) => {
         setModalData(data);
     };
 
-    const saveUpdatedData = () => {
+    const saveUpdatedData = (element: ElementType) => {
         try {
-            let updatedData = JSON.parse(modalData);
+            let updatedData
+            if (element.key === 'API') {
+                updatedData = JSON.parse(modalData);
+            } else if (element.key === 'SCRIPT') {
+                updatedData = {
+                    "inputCode": modalData,
+                    "arguments": "",
+                    "status": 0
+                }
+            }
             dispatch({
                 type: "UPDATE_NODE_DATA",
                 data: {
@@ -81,7 +99,10 @@ const Node = ({ data }: NodeProps) => {
             });
             closeModal();
         } catch {
-            console.log("Invalid JSON structure, cannot save.");
+            notification.open({
+                message: 'Error!',
+                description: 'Invalid JSON structure, cannot save.',
+            });
         }
     };
 
@@ -186,14 +207,9 @@ const Node = ({ data }: NodeProps) => {
                             ></span>
                         </p>
                         <div style={{ width: "100%" }}>
-                            <img src={getIcon(element.key)} />
-                            &nbsp;<span>{element.name}</span>
-                            <div style={{ float: "right" }}>
-                                {/* {["SCRIPT"].includes(element.key) && ( */}
-                                <img onClick={openModal} src={Edit} />
-                                {/* )} */}
-                                &nbsp;&nbsp;
-                                <img onClick={deleteNode} src={Cross} />
+                            <img src={getIcon(element.key)} />&nbsp;<span>{element.name}</span>
+                            <div style={{ float: 'right' }}>
+                                {['SCRIPT', 'API'].includes(element.key) && <img onClick={openModal} src={Edit} />}&nbsp;<img onClick={deleteNode} src={Cross} />
                             </div>
                         </div>
                     </div>
@@ -260,10 +276,13 @@ const Node = ({ data }: NodeProps) => {
                             }}
                         ></div>
                     ) : null}
-                    {/* <div className="bottom">
-                        <button onClick={openModal}>Data</button>
-                        <button onClick={deleteNode}>Delete</button>
-                    </div> */}
+                    {element.key === "chart" && (
+                        <div
+                            style={{ margin: "5px 10px" }}
+                        >
+                            <Chart data={data.data.value} />
+                        </div>
+                    )}
                 </div>
             )}
             {dataModalOpen && element ? (
@@ -275,12 +294,7 @@ const Node = ({ data }: NodeProps) => {
                                 {">"}_&nbsp;&nbsp;Editor - {element.name}
                             </span>
                             <div style={styles.modalHeaderRight}>
-                                <div
-                                    onClick={saveUpdatedData}
-                                    style={styles.modalSaveButton}
-                                >
-                                    Save Changes
-                                </div>
+                                <div onClick={() => saveUpdatedData(element)} style={styles.modalSaveButton}>Save Changes</div>
                                 <img onClick={closeModal} src={Cross} />
                             </div>
                         </div>

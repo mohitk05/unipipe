@@ -168,6 +168,16 @@ export const pinMapping: PinMapping = {
         ],
         outputs: [],
     },
+    chart: {
+        inputs: [
+            {
+                type: "in",
+                label: "input",
+                name: "input",
+            },
+        ],
+        outputs: [],
+    },
     API: {
         inputs: [
             {
@@ -216,92 +226,105 @@ export const elements: {
     initialData?: (node: NodeType) => object;
     description: string;
 }[] = [
-    // {
-    //     key: "add",
-    //     type: "add",
-    //     name: "Add",
-    //     processor: getProcessor("add"),
-    //     pinMapping: pinMapping["add"],
-    // },
-    // {
-    //     key: "square",
-    //     type: "square",
-    //     name: "Square",
-    //     processor: getProcessor("square"),
-    //     pinMapping: pinMapping["square"],
-    // },
-    // {
-    //     key: "factorial",
-    //     type: "factorial",
-    //     name: "Factorial",
-    //     processor: getProcessor("factorial"),
-    //     pinMapping: pinMapping["factorial"],
-    // },
-    // {
-    //     key: "conditional",
-    //     type: "conditional",
-    //     name: "Conditional",
-    //     processor: getProcessor("conditional"),
-    //     pinMapping: pinMapping["conditional"],
-    // },
-    {
-        key: "constant",
-        type: "constant",
-        name: "Constant",
-        initialData: () => {
-            return { value: "" };
+        // {
+        //     key: "add",
+        //     type: "add",
+        //     name: "Add",
+        //     processor: getProcessor("add"),
+        //     pinMapping: pinMapping["add"],
+        // },
+        // {
+        //     key: "square",
+        //     type: "square",
+        //     name: "Square",
+        //     processor: getProcessor("square"),
+        //     pinMapping: pinMapping["square"],
+        // },
+        // {
+        //     key: "factorial",
+        //     type: "factorial",
+        //     name: "Factorial",
+        //     processor: getProcessor("factorial"),
+        //     pinMapping: pinMapping["factorial"],
+        // },
+        // {
+        //     key: "conditional",
+        //     type: "conditional",
+        //     name: "Conditional",
+        //     processor: getProcessor("conditional"),
+        //     pinMapping: pinMapping["conditional"],
+        // },
+        {
+            key: "constant",
+            type: "constant",
+            name: "Constant",
+            initialData: () => {
+                return { value: "" };
+            },
+            processor: getProcessor("constant"),
+            pinMapping: pinMapping["constant"],
+            description: "Provides a constant value at its output",
         },
-        processor: getProcessor("constant"),
-        pinMapping: pinMapping["constant"],
-        description: "Provides a constant value at its output",
-    },
-    // {
-    //     key: "regex",
-    //     type: "regex",
-    //     name: "Regex Match",
-    //     processor: getProcessor("regex"),
-    //     initialData: () => {
-    //         return {
-    //             regex: "hey",
-    //             flags: "g",
-    //         };
-    //     },
-    //     pinMapping: pinMapping["regex"],
-    // },
-    // {
-    //     key: "console",
-    //     type: "sink",
-    //     name: "Console",
-    //     processor: getProcessor("console"),
-    //     pinMapping: pinMapping["console"],
-    // },
-    {
-        key: "display",
-        type: "sink",
-        name: "Display",
-        processor: getProcessor("display"),
-        pinMapping: pinMapping["display"],
-        initialData: (node: NodeType) => {
-            return {
-                node: node.id,
-            };
+        // {
+        //     key: "regex",
+        //     type: "regex",
+        //     name: "Regex Match",
+        //     processor: getProcessor("regex"),
+        //     initialData: () => {
+        //         return {
+        //             regex: "hey",
+        //             flags: "g",
+        //         };
+        //     },
+        //     pinMapping: pinMapping["regex"],
+        // },
+        // {
+        //     key: "console",
+        //     type: "sink",
+        //     name: "Console",
+        //     processor: getProcessor("console"),
+        //     pinMapping: pinMapping["console"],
+        // },
+        {
+            key: "display",
+            type: "sink",
+            name: "Display",
+            processor: getProcessor("display"),
+            pinMapping: pinMapping["display"],
+            initialData: (node: NodeType) => {
+                return {
+                    node: node.id,
+                };
+            },
+            description: "Displays the value of the input provided",
         },
-        description: "Displays the value of the input provided",
-    },
-    {
-        key: "html",
-        type: "sink",
-        name: "HTML Output",
-        processor: getProcessor("html"),
-        pinMapping: pinMapping["html"],
-        initialData: (node: NodeType) => {
-            return {
-                node: node.id,
-            };
+        {
+            key: "html",
+            type: "sink",
+            name: "HTML Output",
+            processor: getProcessor("html"),
+            pinMapping: pinMapping["html"],
+            initialData: (node: NodeType) => {
+                return {
+                    node: node.id,
+                };
+            },
+            description: "Renders the HTML provided as input",
         },
-        description: "Renders the HTML provided as input",
-    },
-];
+        {
+            key: "chart",
+            type: "sink",
+            name: "Chart Output",
+            processor: getProcessor("chart"),
+            pinMapping: pinMapping["chart"],
+            initialData: (node: NodeType) => {
+                return {
+                    node: node.id,
+                };
+            },
+            description: "Renders the Chart provided as input",
+        },
+    ];
 
 export const saveElements = (
     items: ElementResponseStructure[]
