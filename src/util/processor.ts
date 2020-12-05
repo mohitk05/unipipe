@@ -58,18 +58,18 @@ const processors: { [key: string]: (param: any) => any } = {
     },
     API: async ({ node, ctx }) => {
         let body = {
-            apiType: node.data.requestType,
+            apiType: node.data.apiType,
             url: node.data.url,
             headers: node.data.headers,
-            json: node.data.requestType === "POST" && node.data.inputJson,
+            json: node.data.apiType === "POST" ? node.data.inputJson : "",
         };
-        return await fetch(
-            "https://run.mocky.io/v3/f84df4fa-58b2-45f8-94c0-b13c5a50e5eb",
-            {
-                method: "POST",
-                body: JSON.stringify(body),
-            }
-        )
+        return await fetch("http://3.235.176.40:8080/api-execute", {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json; charset=utf8",
+            },
+        })
             .then((res) => res.json())
             .then((res) => {
                 return { out: res.data };
@@ -77,14 +77,17 @@ const processors: { [key: string]: (param: any) => any } = {
     },
     SCRIPT: async ({ input1, input2, node, ctx }) => {
         let body = {
-            inputCode: node.data.inputCode,
-            arguments: input1,
+            source: node.data.inputCode,
+            input: typeof input1 === "string" ? input1 : JSON.stringify(input1),
         };
         return await fetch(
-            "https://run.mocky.io/v3/f84df4fa-58b2-45f8-94c0-b13c5a50e5eb",
+            "http://3.235.176.40:8080/script-execute/string-to-file",
             {
                 method: "POST",
                 body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json; charset=utf8",
+                },
             }
         )
             .then((res) => res.json())

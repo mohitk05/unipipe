@@ -1,7 +1,7 @@
 .header {
-    height: 72px;
+    height: 70px;
     padding: 0 30px 0 30px;
-    background: #FFFFFF;
+    background: #ffffff;
     box-shadow: 0px 1px 2px rgba(51, 54, 68, 0.1);
     display: flex;
     justify-content: space-between;
@@ -15,6 +15,7 @@
 .middleNav {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .iconButton {
@@ -31,13 +32,14 @@
     font-size: 12px;
     line-height: 150%;
     text-align: center;
-    color: #7C8698;
+    color: #7c8698;
     margin-top: 4px;
 }
 
 .rightNav {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .button {
@@ -53,25 +55,25 @@
 .executeButton {
     width: 114px;
     height: 36px;
-    background: #6A3DED;
+    background: #6a3ded;
     border-radius: 8px;
     align-items: center;
     justify-content: center;
     display: flex;
 }
 
-.executeButton>span {
+.executeButton > span {
     width: 62px;
     height: 24px;
     font-size: 16px;
     line-height: 150%;
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .shareButton {
     width: 36px;
     height: 36px;
-    background: #DFE1E6;
+    background: #dfe1e6;
     border-radius: 8px;
     display: flex;
     justify-content: center;
@@ -84,12 +86,12 @@
     margin-left: 40px;
 }
 
-.exportButton>* {
+.exportButton > * {
     margin-right: 6px;
 }
 
-.exportButton>span {
+.exportButton > span {
     font-size: 15px;
     line-height: 150%;
-    color: #6A3DED;
+    color: #6a3ded;
 }

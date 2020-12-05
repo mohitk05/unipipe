@@ -119,6 +119,13 @@ const execute = (
     globalElements = elements;
     let nodeMap: { [key: string]: ExecutorNode } = {};
     nodes.forEach((node) => {
+        ctx.postMessage({
+            type: "update_node",
+            node: node.id,
+            update: {
+                status: 0,
+            },
+        });
         nodeMap[node.id] = new ExecutorNode(node);
     });
     const executeRecursive = async (current: string) => {
