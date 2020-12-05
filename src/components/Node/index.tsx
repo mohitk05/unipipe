@@ -276,7 +276,7 @@ const Node = ({ data }: NodeProps) => {
                             }}
                         ></div>
                     ) : null}
-                    {element.key === "chart" && (
+                    {element.key === "chart" && data.data && (
                         <div
                             style={{ margin: "5px 10px" }}
                         >
