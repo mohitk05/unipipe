@@ -2,6 +2,7 @@ import { type } from "os";
 
 const processors: { [key: string]: (param: any) => any } = {
     add: ({ input1, input2 }) => {
+        console.log(input1, input2);
         return { sum: input1 + input2 };
     },
     square: ({ input }) => {
@@ -79,25 +80,25 @@ const processors: { [key: string]: (param: any) => any } = {
         console.log(input);
     },
     API: async ({ input, node, ctx }) => {
-        let body = {
-            apiType: node.data.apiType,
-            url: node.data.url,
-            headers: node.data.headers,
-            json:
-                node.data.apiType === "POST"
-                    ? JSON.stringify(input) || node.data.inputJson
-                    : "",
-        };
-        return await fetch("http://3.235.176.40:8080/api-execute", {
-            method: "POST",
-            body: JSON.stringify(body),
+        let options: {
+            method: string;
+            headers: any;
+            body?: any;
+        } = {
+            method: node.data.apiType,
             headers: {
                 "Content-Type": "application/json; charset=utf8",
+                ...node.data.headers,
             },
-        })
+        };
+        if (node.data.apiType === "POST") {
+            options.body = JSON.stringify(input) || node.data.inputJson;
+        }
+        console.log(options);
+        return await fetch(node.data.url, options)
             .then((res) => res.json())
             .then((res) => {
-                return { out: res.data };
+                return { out: res };
             })
             .catch((err) => {
                 throw Error(err);
@@ -129,22 +130,12 @@ const processors: { [key: string]: (param: any) => any } = {
         };
         let body = {
             source: node.data.inputCode,
-            input: JSON.stringify(combinedInput),
+            input: combinedInput,
         };
-        return await fetch(
-            "http://3.235.176.40:8080/script-execute/string-to-file",
-            {
-                method: "POST",
-                body: JSON.stringify(body),
-                headers: {
-                    "Content-Type": "application/json; charset=utf8",
-                },
-            }
-        )
-            .then((res) => res.json())
-            .then((res) => {
-                return { out: res.data };
-            });
+        if (!/function \w+\d*\s*\(/.test(body.source)) {
+            const output = eval(body.source);
+            return { out: output(body.input) };
+        } else return { out: {} };
     },
 };
 

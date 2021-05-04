@@ -12,6 +12,8 @@ ul {
     border-right: 1px solid #dfe1e6;
     flex-shrink: 0;
     height: 442px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .elementName {
@@ -20,7 +22,7 @@ ul {
     width: 224px;
     height: 48px;
     display: flex;
-    padding: 10px;
+    padding: 0 10px;
     align-items: center;
 }
 

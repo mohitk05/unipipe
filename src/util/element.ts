@@ -1,5 +1,4 @@
 import { getProcessor } from "./processor";
-import { v4 as uuidv4 } from "uuid";
 import { NodeType } from "../context/main";
 import { ElementResponseStructure } from "../components/ElementList";
 
@@ -226,105 +225,156 @@ export const elements: {
     initialData?: (node: NodeType) => object;
     description: string;
 }[] = [
-        // {
-        //     key: "add",
-        //     type: "add",
-        //     name: "Add",
-        //     processor: getProcessor("add"),
-        //     pinMapping: pinMapping["add"],
-        // },
-        // {
-        //     key: "square",
-        //     type: "square",
-        //     name: "Square",
-        //     processor: getProcessor("square"),
-        //     pinMapping: pinMapping["square"],
-        // },
-        // {
-        //     key: "factorial",
-        //     type: "factorial",
-        //     name: "Factorial",
-        //     processor: getProcessor("factorial"),
-        //     pinMapping: pinMapping["factorial"],
-        // },
-        // {
-        //     key: "conditional",
-        //     type: "conditional",
-        //     name: "Conditional",
-        //     processor: getProcessor("conditional"),
-        //     pinMapping: pinMapping["conditional"],
-        // },
-        {
-            key: "constant",
-            type: "constant",
-            name: "Constant",
-            initialData: () => {
-                return { value: "" };
-            },
-            processor: getProcessor("constant"),
-            pinMapping: pinMapping["constant"],
-            description: "Provides a constant value at its output",
+    {
+        key: "add",
+        type: "add",
+        name: "Add",
+        description: `<p>Add two values as per JavaScript addition.</p>
+        <p>Inputs: </p>
+        <ul>
+        <li><code>input1 : number | string</code></li>
+        <li><code>input2 : number | string</code></li>
+        </ul>
+        <p>Output:</p>
+        <ul>
+        <li><code>sum : number | string</code></li>
+        </ul>
+        `,
+        processor: getProcessor("add"),
+        pinMapping: pinMapping["add"],
+    },
+    {
+        key: "square",
+        type: "square",
+        name: "Square",
+        description: "Squares a number",
+        processor: getProcessor("square"),
+        pinMapping: pinMapping["square"],
+    },
+    {
+        key: "factorial",
+        type: "factorial",
+        name: "Factorial",
+        description: "Factorial of a number",
+        processor: getProcessor("factorial"),
+        pinMapping: pinMapping["factorial"],
+    },
+    {
+        key: "conditional",
+        type: "conditional",
+        name: "Conditional",
+        description: "If-Else operator",
+        processor: getProcessor("conditional"),
+        pinMapping: pinMapping["conditional"],
+        initialData: () => {
+            return { condition: 5 };
         },
-        // {
-        //     key: "regex",
-        //     type: "regex",
-        //     name: "Regex Match",
-        //     processor: getProcessor("regex"),
-        //     initialData: () => {
-        //         return {
-        //             regex: "hey",
-        //             flags: "g",
-        //         };
-        //     },
-        //     pinMapping: pinMapping["regex"],
-        // },
-        // {
-        //     key: "console",
-        //     type: "sink",
-        //     name: "Console",
-        //     processor: getProcessor("console"),
-        //     pinMapping: pinMapping["console"],
-        // },
-        {
-            key: "display",
-            type: "sink",
-            name: "Display",
-            processor: getProcessor("display"),
-            pinMapping: pinMapping["display"],
-            initialData: (node: NodeType) => {
-                return {
-                    node: node.id,
-                };
-            },
-            description: "Displays the value of the input provided",
+    },
+    {
+        key: "constant",
+        type: "constant",
+        name: "Constant",
+        initialData: () => {
+            return { value: "" };
         },
-        {
-            key: "html",
-            type: "sink",
-            name: "HTML Output",
-            processor: getProcessor("html"),
-            pinMapping: pinMapping["html"],
-            initialData: (node: NodeType) => {
-                return {
-                    node: node.id,
-                };
-            },
-            description: "Renders the HTML provided as input",
+        processor: getProcessor("constant"),
+        pinMapping: pinMapping["constant"],
+        description: "Provides a constant value at its output",
+    },
+    {
+        key: "regex",
+        type: "regex",
+        name: "Regex Match",
+        description: "Matches regex for input",
+        processor: getProcessor("regex"),
+        initialData: () => {
+            return {
+                regex: "hey",
+                flags: "g",
+            };
         },
-        {
-            key: "chart",
-            type: "sink",
-            name: "Chart Output",
-            processor: getProcessor("chart"),
-            pinMapping: pinMapping["chart"],
-            initialData: (node: NodeType) => {
-                return {
-                    node: node.id,
-                };
-            },
-            description: "Renders the Chart provided as input",
+        pinMapping: pinMapping["regex"],
+    },
+    // {
+    //     key: "console",
+    //     type: "sink",
+    //     name: "Console",
+    //     processor: getProcessor("console"),
+    //     pinMapping: pinMapping["console"],
+    // },
+    {
+        key: "display",
+        type: "sink",
+        name: "Display",
+        processor: getProcessor("display"),
+        pinMapping: pinMapping["display"],
+        initialData: (node: NodeType) => {
+            return {
+                node: node.id,
+            };
         },
-    ];
+        description: "Displays the value of the input provided",
+    },
+    {
+        key: "html",
+        type: "sink",
+        name: "HTML Output",
+        processor: getProcessor("html"),
+        pinMapping: pinMapping["html"],
+        initialData: (node: NodeType) => {
+            return {
+                node: node.id,
+            };
+        },
+        description: "Renders the HTML provided as input",
+    },
+    {
+        key: "chart",
+        type: "sink",
+        name: "Chart Output",
+        processor: getProcessor("chart"),
+        pinMapping: pinMapping["chart"],
+        initialData: (node: NodeType) => {
+            return {
+                node: node.id,
+            };
+        },
+        description: "Renders the Chart provided as input",
+    },
+];
+
+const sampleElements = [
+    {
+        id: 1,
+        blockType: "API",
+        apiType: "GET",
+        url: "https://example.com",
+        blockName: "API Block",
+        blockDescription:
+            "This block fires an API as specified in the properties",
+        inputJson: null,
+        inputImageUrl: null,
+        outputImageUrl: null,
+        inputCode: null,
+        arguments: null,
+    },
+    {
+        id: 2,
+        blockType: "SCRIPT",
+        apiType: "GET",
+        url: "https://example.com",
+        blockName: "Custom Script",
+        blockDescription:
+            "This block fires an API as specified in the properties",
+        inputJson: null,
+        inputImageUrl: null,
+        outputImageUrl: null,
+        inputCode: `({ input1, input2 }) => {
+    return input1;
+}`,
+        arguments: null,
+    },
+];
 
 export const saveElements = (
     items: ElementResponseStructure[]
@@ -382,12 +432,8 @@ export const getAllElements = async (): Promise<{
     if (elements) {
         return Promise.resolve(JSON.parse(elements));
     } else {
-        return await fetch("http://3.235.176.40:8080/blocks")
-            .then((res) => res.json())
-            .then((res: ElementResponseStructure[]) => {
-                let modified = saveElements(res);
-                return modified;
-            });
+        let modified = saveElements(sampleElements);
+        return modified;
     }
 };
 

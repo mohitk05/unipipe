@@ -124,10 +124,10 @@ const Pin = (props: PinProps) => {
                     board.selectedPin === props.pin
                         ? styles.selected
                         : {
-                              padding: 4,
-                              textAlign:
-                                  pinObject.type === "in" ? "left" : "right",
-                          }
+                            padding: 4,
+                            textAlign:
+                                pinObject.type === "in" ? "left" : "right",
+                        }
                 }
             >
                 {getTag(pinObject.type)}
@@ -146,7 +146,7 @@ const styles = {
     pinText: {
         width: "44px",
         height: "20px",
-        fontSize: "13px",
+        fontSize: 10,
         lineHeight: "150%",
         color: "#45526C",
     },

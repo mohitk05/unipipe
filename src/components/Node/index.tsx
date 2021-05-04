@@ -10,10 +10,10 @@ import Code from "../../assets/code.svg";
 import Branch from "../../assets/branch.svg";
 import Cross from "../../assets/cross.svg";
 import CodeBox from "../CodeBox";
-import { notification } from "antd";
 import Chart from "../Chart";
 
 function getIcon(name: string) {
+    console.log(name)
     switch (name) {
         case "API":
             return Block;
@@ -100,7 +100,7 @@ const Node = ({ data }: NodeProps) => {
             });
             closeModal();
         } catch {
-            notification.open({
+            console.error({
                 message: "Error!",
                 description: "Invalid JSON structure, cannot save.",
             });
@@ -218,10 +218,9 @@ const Node = ({ data }: NodeProps) => {
                             ></span>
                         </p>
                         <div style={{ width: "100%" }}>
-                            <img src={getIcon(element.key)} />
-                            &nbsp;<span>{element.name}</span>
+                            <span style={{ position: 'relative', top: 3 }}>{element.name}</span>
                             <div style={{ float: "right" }}>
-                                {["SCRIPT", "API", "constant"].includes(
+                                {["SCRIPT", "API", "constant", "conditional"].includes(
                                     element.key
                                 ) && <img onClick={openModal} src={Edit} />}
                                 &nbsp;
@@ -237,6 +236,7 @@ const Node = ({ data }: NodeProps) => {
                                     border: "2px solid #ccc",
                                     padding: 5,
                                     fontFamily: "monospace",
+                                    fontSize: '0.7rem'
                                 }}
                             >
                                 <span>
@@ -278,7 +278,7 @@ const Node = ({ data }: NodeProps) => {
                                 width: "100%",
                                 overflow: "auto",
                                 fontFamily: "Menlo",
-                                fontSize: "0.7rem",
+                                fontSize: "1rem",
                                 whiteSpace: "pre-wrap",
                             }}
                         >
@@ -306,36 +306,36 @@ const Node = ({ data }: NodeProps) => {
             )}
             {dataModalOpen && element
                 ? ReactDOM.createPortal(
-                      <div style={styles.modal} onClick={closeModal}>
-                          <div
-                              style={styles.modalInner}
-                              onClick={onClickModalInner}
-                          >
-                              <div style={styles.modalHeader}>
-                                  <span>
-                                      {" "}
-                                      {">"}_&nbsp;&nbsp;Editor - {element.name}
-                                  </span>
-                                  <div style={styles.modalHeaderRight}>
-                                      <div
-                                          onClick={() =>
-                                              saveUpdatedData(element)
-                                          }
-                                          style={styles.modalSaveButton}
-                                      >
-                                          Save Changes
+                    <div style={styles.modal} onClick={closeModal}>
+                        <div
+                            style={styles.modalInner}
+                            onClick={onClickModalInner}
+                        >
+                            <div style={styles.modalHeader}>
+                                <span>
+                                    {" "}
+                                    {">"}_&nbsp;&nbsp;Editor - {element.name}
+                                </span>
+                                <div style={styles.modalHeaderRight}>
+                                    <div
+                                        onClick={() =>
+                                            saveUpdatedData(element)
+                                        }
+                                        style={styles.modalSaveButton}
+                                    >
+                                        Save Changes
                                       </div>
-                                      <img onClick={closeModal} src={Cross} />
-                                  </div>
-                              </div>
-                              <CodeBox
-                                  value={modalData}
-                                  onChange={updateModalData}
-                              />
-                          </div>
-                      </div>,
-                      getPortalElement()
-                  )
+                                    <img onClick={closeModal} src={Cross} />
+                                </div>
+                            </div>
+                            <CodeBox
+                                value={modalData}
+                                onChange={updateModalData}
+                            />
+                        </div>
+                    </div>,
+                    getPortalElement()
+                )
                 : null}
         </div>
     );
@@ -385,7 +385,6 @@ const styles = {
     modalHeader: {
         width: 800,
         height: 40,
-        color: "#FFFFFF",
         fontSize: 15,
         lineHeight: "150%",
         fontWeight: 600,
@@ -402,14 +401,13 @@ const styles = {
     modalInner: {
         borderRadius: 10,
         width: 800,
-        height: 414.14,
-        background: "#06132A",
+        background: "#FFF",
         overflow: "hidden",
+        boxShadow: '0px 6px 10px rgba(51, 54, 68, 0.05), 0px 10px 16px rgba(51, 54, 68, 0.15)'
     },
     modalSaveButton: {
         width: 119,
         height: 25,
-        opacity: 0.7,
         background: "#4F8AFB",
         fontSize: 15,
         lineHeight: "150%",

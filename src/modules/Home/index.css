@@ -1,4 +1,5 @@
 .main {
     display: flex;
-    height: calc(100vh - 64px);
+    height: calc(100vh - 54px);
+    background: rgb(238, 238, 238);
 }

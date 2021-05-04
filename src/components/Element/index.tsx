@@ -37,9 +37,9 @@ const Element = ({ data, onAdded }: ElementProps) => {
     return (
         <div style={styles.element}>
             <h2 style={{ margin: 0 }}>{data.name}</h2>
-            <p>
-                {data.description || "No description available for this block."}
-            </p>
+            {data.description ?
+                <p dangerouslySetInnerHTML={{ __html: data.description }}></p>
+                : "No description available for this block."}
             <button className="addToBoardButton" onClick={addElementToBoard}>
                 Add to board
             </button>
