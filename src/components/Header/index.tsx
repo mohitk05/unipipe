@@ -1,21 +1,15 @@
 import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
-import Logo from "../../assets/pipe.png";
 
 import "./index.css";
 
 import { MainContext } from "../../context/main";
-import Executor from "worker-loader!../../executor/executor-new.worker";
 import { getAllElements } from "../../util/element";
 
 import Category from "../../assets/category.svg";
 import Graph from "../../assets/graph.svg";
 import Play from "../../assets/play.svg";
 import Plus from "../../assets/plus.svg";
-import Document from "../../assets/document.svg";
-import Wand from "../../assets/wand.svg";
-import Share from "../../assets/share.svg";
-import Save from "../../assets/save.svg";
 import ElementList from "../ElementList";
 
 const middleNav = [
@@ -25,7 +19,7 @@ const middleNav = [
 ];
 
 /* eslint import/no-webpack-loader-syntax: off */
-const executor = new Executor();
+const executor = new Worker("../../executor/executor-new.worker.ts");
 const { useContext, useEffect } = React;
 
 const HeaderModule = () => {

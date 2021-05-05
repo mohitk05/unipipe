@@ -17,10 +17,11 @@
         "@types/uuid": "^8.0.0",
         "axios": "^0.21.0",
         "codemirror": "^5.61.0",
-        "react": "^16.13.1",
+        "executor": "^1.0.6",
+        "react": "^16.14.0",
         "react-ace": "^9.2.0",
         "react-codemirror2": "^7.2.1",
-        "react-dom": "^16.13.1",
+        "react-dom": "^16.14.0",
         "react-redux": "^7.2.0",
         "react-router-dom": "^5.2.0",
         "react-scripts": "3.4.1",
@@ -30,10 +31,8 @@
         "uuid": "^8.2.0"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "start": "parcel public/index.html --open -p 3000",
+        "build": "parcel build public/index.html"
     },
     "eslintConfig": {
         "extends": "react-app"
@@ -51,6 +50,7 @@
         ]
     },
     "devDependencies": {
+        "parcel-bundler": "^1.12.5",
         "worker-loader": "^3.0.0"
     }
 }
