@@ -22,18 +22,13 @@ const App: React.FC = () => {
     return (
         <div className="App">
             <MainContext.Provider value={{ state, dispatch }}>
-                <Router>
+                <Router basename="/unipipe">
                     <HeaderModule />
                     <Switch>
                         <Route path="/home/:id">
                             <Home />
                         </Route>
-                        <Route exact path="/home">
-                            <Redirect to="/home/new" />
-                        </Route>
-                        <Route exact path="/">
-                            <LandingPage />
-                        </Route>
+                        <Redirect from="*" to="/home/new" />
                     </Switch>
                     {/* <Footer style={{ textAlign: 'center' }}> <img style={{ width: 12, height: 12, transform: 'rotate(90deg)' }} src={Logo} />UNIPIPE  ©2020</Footer> */}
                 </Router>

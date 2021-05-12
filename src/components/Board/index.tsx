@@ -26,14 +26,10 @@ const Board = () => {
                 </svg>
                 <span style={{ fontSize: 24, lineHeight: '130%', color: '#45526C', marginBottom: 22, marginTop: 10 }}>Looks squeaky clean in here</span>
                 <span style={{ display: 'flex', alignItems: 'center' }}>
-                    &nbsp;To get started, add a&nbsp;
+                    &nbsp;To get started, add a&nbsp;&nbsp;
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 89, height: 36, background: '#FFFFFF', boxShadow: ' 0px 0px 4px rgba(51, 54, 68, 0.05), 0px 2px 6px rgba(51, 54, 68, 0.1)', borderRadius: 8 }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M7.33 2H16.66C20.06 2 22 3.92 22 7.33V16.67C22 20.06 20.07 22 16.67 22H7.33C3.92 22 2 20.06 2 16.67V7.33C2 3.92 3.92 2 7.33 2ZM12.8201 12.8301H15.6601C16.1201 12.8201 16.4901 12.4501 16.4901 11.9901C16.4901 11.5301 16.1201 11.1601 15.6601 11.1601H12.8201V8.34007C12.8201 7.88007 12.4501 7.51007 11.9901 7.51007C11.5301 7.51007 11.1601 7.88007 11.1601 8.34007V11.1601H8.33013C8.11013 11.1601 7.90013 11.2501 7.74013 11.4001C7.59013 11.5601 7.50013 11.7691 7.50013 11.9901C7.50013 12.4501 7.87013 12.8201 8.33013 12.8301H11.1601V15.6601C11.1601 16.1201 11.5301 16.4901 11.9901 16.4901C12.4501 16.4901 12.8201 16.1201 12.8201 15.6601V12.8301Z" fill="#7C8698" />
-                    </svg>&nbsp;Block</div>
-                    &nbsp;or explore pre-made&nbsp;
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 89, height: 36, background: '#FFFFFF', boxShadow: ' 0px 0px 4px rgba(51, 54, 68, 0.05), 0px 2px 6px rgba(51, 54, 68, 0.1)', borderRadius: 8 }}><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M3.78268 1.6665H6.59935C7.77435 1.6665 8.71602 2.62484 8.71602 3.80067V6.6415C8.71602 7.82484 7.77435 8.77484 6.59935 8.77484H3.78268C2.61602 8.77484 1.66602 7.82484 1.66602 6.6415V3.80067C1.66602 2.62484 2.61602 1.6665 3.78268 1.6665ZM3.78268 11.2246H6.59935C7.77435 11.2246 8.71602 12.1754 8.71602 13.3588V16.1996C8.71602 17.3746 7.77435 18.3329 6.59935 18.3329H3.78268C2.61602 18.3329 1.66602 17.3746 1.66602 16.1996V13.3588C1.66602 12.1754 2.61602 11.2246 3.78268 11.2246ZM16.2161 1.6665H13.3994C12.2244 1.6665 11.2827 2.62484 11.2827 3.80067V6.6415C11.2827 7.82484 12.2244 8.77484 13.3994 8.77484H16.2161C17.3827 8.77484 18.3327 7.82484 18.3327 6.6415V3.80067C18.3327 2.62484 17.3827 1.6665 16.2161 1.6665ZM13.3994 11.2246H16.2161C17.3827 11.2246 18.3327 12.1754 18.3327 13.3588V16.1996C18.3327 17.3746 17.3827 18.3329 16.2161 18.3329H13.3994C12.2244 18.3329 11.2827 17.3746 11.2827 16.1996V13.3588C11.2827 12.1754 12.2244 11.2246 13.3994 11.2246Z" fill="#7C8698" />
-                    </svg>&nbsp;Flows</div>
+                    </svg>&nbsp;Block</div>&nbsp; from above.
                 </span>
             </div>}
             {nodes &&

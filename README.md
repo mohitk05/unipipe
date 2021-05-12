@@ -8,7 +8,11 @@ Design Credits: Sreekar Pradyumna
 
 A tool to build generic flows to automate stuff. Inspired by Unix's pipe system and the concept of functional programming. Currently supports JavaScript processors, WIP for generic ones.
 
-### Currently available blocks
+## Demo
+
+You can it out here: https://mohitk05.github.io/unipipe/
+
+## Currently available blocks
 
 | Name          | Description                                                    |
 | ------------- | -------------------------------------------------------------- |
