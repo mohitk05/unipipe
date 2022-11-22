@@ -367,14 +367,18 @@ function () {
 
             case 2:
               e_1 = _a.sent();
-              rej("Error executing node - " + globalElements[this.node.type].type + " (" + this.node.id + "). Message: " + e_1.message);
-              ctx.postMessage({
-                type: "update_node",
-                node: this.node.id,
-                update: {
-                  status: 3
-                }
-              });
+
+              if (e_1 instanceof Error) {
+                rej("Error executing node - " + globalElements[this.node.type].type + " (" + this.node.id + "). Message: " + e_1.message);
+                ctx.postMessage({
+                  type: "update_node",
+                  node: this.node.id,
+                  update: {
+                    status: 3
+                  }
+                });
+              }
+
               return [3
               /*break*/
               , 4];
@@ -415,13 +419,16 @@ var execute = function (nodes, inputPins, outputPins, elements) {
   var executeRecursive = function (current) {
     return __awaiter(void 0, void 0, void 0, function () {
       var currentNode, inputs, inputPromises;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
+
+      var _a;
+
+      return __generator(this, function (_b) {
+        switch (_b.label) {
           case 0:
             currentNode = nodeMap[current];
             inputs = currentNode.getNode().inputs;
             inputPromises = [];
-            inputs.forEach(function (input) {
+            (_a = inputs) === null || _a === void 0 ? void 0 : _a.forEach(function (input) {
               var inputPin = inputPins[input];
 
               if (inputPin.ref) {
@@ -462,10 +469,14 @@ var execute = function (nodes, inputPins, outputPins, elements) {
                 scopeData[res.name] = res.data;
               });
               currentNode.execute(scopeData).then(function (data) {
+                var _a, _b;
+
                 var moveToNextNode = function (out) {
+                  var _a;
+
                   var outPinRefs = outputPins[out].refs;
                   var nextNodes = {};
-                  outPinRefs.forEach(function (oRef) {
+                  (_a = outPinRefs) === null || _a === void 0 ? void 0 : _a.forEach(function (oRef) {
                     var nextNode = inputPins[oRef].node;
 
                     if (!nextNodes[nextNode]) {
@@ -475,7 +486,7 @@ var execute = function (nodes, inputPins, outputPins, elements) {
                   });
                 };
 
-                if (currentNode.getNode().outputs.length && !["sink", "conditional"].includes(globalElements[currentNode.getNode().type].type) && currentNode.getNode().outputs.length) {
+                if (((_a = currentNode.getNode().outputs) === null || _a === void 0 ? void 0 : _a.length) && !["sink", "conditional"].includes(globalElements[currentNode.getNode().type].type) && ((_b = currentNode.getNode().outputs) === null || _b === void 0 ? void 0 : _b.length)) {
                   currentNode.getNode().outputs.forEach(moveToNextNode);
                 } else if (globalElements[currentNode.getNode().type].type == "conditional") {
                   var next = "";
@@ -497,7 +508,7 @@ var execute = function (nodes, inputPins, outputPins, elements) {
 
           case 1:
             // separate input forEach from logic of moving to next node
-            _a.sent();
+            _b.sent();
 
             return [2
             /*return*/
@@ -520,14 +531,18 @@ var findHeadNode = function (nodes, inputPins, outputPins) {
     nodeMap[node.id] = node;
   });
   var nodesWithoutInputs = nodes.filter(function (node) {
-    return !node.inputs.length;
+    var _a;
+
+    return !((_a = node.inputs) === null || _a === void 0 ? void 0 : _a.length);
   });
   var headNodes = nodesWithoutInputs.filter(function (node) {
     var pass = true;
     node.outputs.forEach(function (out) {
+      var _a;
+
       if (pass) {
         var outPin = outputPins[out];
-        outPin.refs.forEach(function (ref) {
+        (_a = outPin.refs) === null || _a === void 0 ? void 0 : _a.forEach(function (ref) {
           if (pass) {
             var refInputPin = inputPins[ref];
             var refNode = nodeMap[refInputPin.node];
@@ -590,7 +605,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57691" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50257" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

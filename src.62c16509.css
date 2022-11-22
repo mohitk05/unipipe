@@ -15,7 +15,7 @@ code {
 
 
 .nodeContainer {
-    cursor: pointer;
+    cursor: move;
     z-index: 2;
     width: 210px;
     background: #ffffff;
@@ -623,6 +623,7 @@ span.CodeMirror-selectedtext { background: none; }
 
 .leftNav {
     width: 15%;
+    display: flex;
 }
 
 .middleNav {
