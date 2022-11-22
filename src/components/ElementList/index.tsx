@@ -85,12 +85,4 @@ const ElementList = (props: ElementListProps) => {
     );
 };
 
-const styles = {
-    elementList: {
-        padding: 20,
-        width: "20%",
-        borderRight: "1px solid #ccc",
-    },
-};
-
 export default ElementList;

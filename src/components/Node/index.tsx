@@ -124,7 +124,7 @@ const Node = ({ data }: NodeProps) => {
         });
         data.outputs.forEach((output: string) => {
             outputPins &&
-                outputPins[output].refs.forEach((ref: string) => {
+                outputPins[output].refs?.forEach((ref: string) => {
                     dispatch({
                         type: "DISCONNECT_PINS",
                         data: {
@@ -219,7 +219,7 @@ const Node = ({ data }: NodeProps) => {
                         </p>
                         <div style={{ width: "100%" }}>
                             <span style={{ position: 'relative', top: 3 }}>{element.name}</span>
-                            <div style={{ float: "right" }}>
+                            <div style={{ float: "right", cursor: 'pointer' }}>
                                 {["SCRIPT", "API", "constant", "conditional"].includes(
                                     element.key
                                 ) && <img onClick={openModal} src={Edit} />}
@@ -248,7 +248,7 @@ const Node = ({ data }: NodeProps) => {
                             </div>
                         ) : null}
                         <div>
-                            {data.inputs.map((input) => {
+                            {data.inputs?.map((input) => {
                                 return (
                                     <Pin
                                         key={input}
@@ -259,7 +259,7 @@ const Node = ({ data }: NodeProps) => {
                             })}
                         </div>
                         <div>
-                            {data.outputs.map((output) => {
+                            {data.outputs?.map((output) => {
                                 return (
                                     <Pin
                                         key={output}
@@ -324,7 +324,7 @@ const Node = ({ data }: NodeProps) => {
                                         style={styles.modalSaveButton}
                                     >
                                         Save Changes
-                                      </div>
+                                    </div>
                                     <img onClick={closeModal} src={Cross} />
                                 </div>
                             </div>

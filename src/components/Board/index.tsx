@@ -1,13 +1,42 @@
 import * as React from "react";
 import Node from "./../Node";
-import { MainContext } from "../../context/main";
+import { BoardState, MainContext } from "../../context/main";
 import Connector from "../Connector";
+import { ref, child, get } from "firebase/database";
+import { database } from "./../../util/firebase";
 
 const { useContext } = React;
 const Board = () => {
     const {
         state: { board },
+        dispatch
     } = useContext(MainContext);
+    const [loading, setLoading] = React.useState(true);
+    React.useEffect(() => {
+        if (window.location.pathname.split('/').includes('home')) {
+            setLoading(true);
+            get(child(ref(database), `recipes/${window.location.pathname.split('/').pop()}`))
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        dispatch({
+                            type: 'LOAD_RECIPE',
+                            data: {
+                                state: snapshot.val().board as BoardState
+                            }
+                        })
+                    } else {
+                        console.log(`No recipes found for ${window.location.pathname}`);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [])
+    if (loading) return null;
     const { nodes, inputPins, outputPins } = board;
     return (
         <div style={styles.board}>
@@ -41,7 +70,7 @@ const Board = () => {
                     Object.keys(outputPins).map((key) => {
                         return (
                             <>
-                                {outputPins[key].refs.map((ref) => {
+                                {outputPins[key].refs?.map((ref) => {
                                     if (inputPins) {
                                         const inputPin = inputPins[ref];
                                         return (

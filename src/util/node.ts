@@ -6,18 +6,22 @@ export const createNode = async (type: string) => {
     const nodeId = uuidv4();
     const element = await getElement(type);
     const { inputs, outputs } = element.pinMapping;
-    const inputInstances: InPinType[] = inputs.map((i) => ({
-        ...i,
-        id: uuidv4(),
-        node: nodeId,
-        ref: null,
-    }));
-    const outputInstances: OutPinType[] = outputs.map((o) => ({
-        ...o,
-        id: uuidv4(),
-        node: nodeId,
-        refs: [],
-    }));
+    const inputInstances: InPinType[] = inputs
+        ? inputs.map((i) => ({
+              ...i,
+              id: uuidv4(),
+              node: nodeId,
+              ref: null,
+          }))
+        : [];
+    const outputInstances: OutPinType[] = outputs
+        ? outputs.map((o) => ({
+              ...o,
+              id: uuidv4(),
+              node: nodeId,
+              refs: [],
+          }))
+        : [];
     let node: NodeType = {
         id: nodeId,
         type,

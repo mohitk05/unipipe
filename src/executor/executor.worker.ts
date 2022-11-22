@@ -76,7 +76,7 @@ class ExecutorNode {
                 this.data = data;
                 this.subscribers.forEach((s) => s());
                 res(data);
-            } catch (e) {
+            } catch (e: any) {
                 rej(
                     `Error executing node - ${
                         globalElements[this.node.type].type
@@ -152,7 +152,7 @@ const execute = (
                             let nextNodes: {
                                 [id: string]: 1 | undefined;
                             } = {};
-                            outPinRefs.forEach((oRef) => {
+                            outPinRefs?.forEach((oRef) => {
                                 const nextNode = inputPins[oRef].node;
                                 if (!nextNodes[nextNode]) {
                                     executeRecursive(nextNode);
@@ -217,7 +217,7 @@ const findHeadNode = (
         node.outputs.forEach((out) => {
             if (pass) {
                 let outPin = outputPins[out];
-                outPin.refs.forEach((ref) => {
+                outPin.refs?.forEach((ref) => {
                     if (pass) {
                         let refInputPin = inputPins[ref];
                         let refNode: NodeType = nodeMap[refInputPin.node];

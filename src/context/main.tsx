@@ -27,7 +27,7 @@ export type OutPinType = {
     type: "out";
     label: string;
     name: string;
-    refs: string[],
+    refs?: string[],
     position?: {
         x: number;
         y: number;
@@ -59,7 +59,8 @@ export type BoardState = {
 }
 
 export type StoreStateType = {
-    board: BoardState
+    board: BoardState;
+    title?: string;
 }
 
 export const initialState: StoreStateType = {

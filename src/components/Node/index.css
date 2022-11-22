@@ -1,5 +1,5 @@
 .nodeContainer {
-    cursor: pointer;
+    cursor: move;
     z-index: 2;
     width: 210px;
     background: #ffffff;

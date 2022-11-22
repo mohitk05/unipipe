@@ -19,6 +19,8 @@
         "axios": "^0.21.0",
         "codemirror": "^5.61.0",
         "executor": "^1.0.6",
+        "firebase": "^9.6.6",
+        "random-word-slugs": "^0.1.6",
         "react": "^16.14.0",
         "react-ace": "^9.2.0",
         "react-codemirror2": "^7.2.1",

@@ -1,5 +1,8 @@
 import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { generateSlug } from "random-word-slugs";
+import { ref, set } from "firebase/database";
+import { database } from "./../../util/firebase";
 
 import "./index.css";
 
@@ -24,6 +27,7 @@ const { useContext, useEffect } = React;
 
 const HeaderModule = () => {
     const location = useLocation();
+    const recipeKey = location.pathname.split('/').pop();
     const {
         state: { board },
         dispatch,
@@ -31,6 +35,7 @@ const HeaderModule = () => {
     const { nodes, inputPins, outputPins, headNode } = board;
     const [explorerOpen, setExplorerOpen] = React.useState(false);
     const [saveText, setSaveText] = React.useState("Save Flow");
+    const [recipeTitle, setRecipeTitle] = React.useState(recipeKey === "new" ? generateSlug() : recipeKey);
 
     useEffect(() => {
         executor.addEventListener("message", (e: MessageEvent) => {
@@ -65,23 +70,23 @@ const HeaderModule = () => {
         });
     };
 
+    const onRecipeTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setRecipeTitle(value);
+    }
+
     const saveRecipe = () => {
+        if (!recipeTitle || !board || !Object.keys(board).length) return;
         // Save
-        fetch("", {
-            method: "POST",
-            body: JSON.stringify({
-                userId: 1,
-                uuid: 1000,
-                name: "My first flow",
-                flowJson: JSON.stringify(JSON.stringify(board)),
-            }),
-            headers: {
-                "Content-Type": "application/json",
-            },
+        set(ref(database, `recipes/${recipeTitle}`), {
+            title: recipeTitle,
+            board
         })
-            .then((res) => res.json())
-            .then((res) => {
+            .then(() => {
                 setSaveText("Saved!");
+                if (recipeTitle !== location.pathname.split('/').pop()) {
+                    window.location.pathname = window.location.pathname.replace(location.pathname.split('/').pop() as string, recipeTitle);
+                }
                 setTimeout(() => {
                     setSaveText("Save Flow");
                 }, 5000);
@@ -91,21 +96,6 @@ const HeaderModule = () => {
     const openBlocksExplorer = () => {
         setExplorerOpen(true);
     };
-
-    // const loadRecipe = () => {
-    //     const recipe = localStorage.getItem(
-    //         "recipe_922c6adb-1c70-4b51-b895-e55e59eb8e14"
-    //     );
-    //     if (recipe) {
-    //         let recipe_state = JSON.parse(recipe);
-    //         dispatch({
-    //             type: "LOAD_RECIPE",
-    //             data: {
-    //                 state: recipe_state,
-    //             },
-    //         });
-    //     }
-    // };
 
     return (
         <div className="header">
@@ -131,6 +121,7 @@ const HeaderModule = () => {
                         src={Logo}
                     /> */}
                 </Link>
+                <input type="text" onChange={onRecipeTitleChange} value={recipeTitle} />
             </div>
             {location.pathname.includes("/home/") && (
                 <>
@@ -159,19 +150,12 @@ const HeaderModule = () => {
                         >
                             <span>Execute</span>
                         </div>
-                        {/* <div
-                            onClick={saveRecipe}
-                            className="button shareButton"
-                        >
-                            <img src={Share} />
-                        </div>
                         <div
                             onClick={saveRecipe}
                             className="button exportButton"
                         >
-                            <img src={Save} />
                             <span>{saveText}</span>
-                        </div> */}
+                        </div>
                         {explorerOpen && (
                             <div
                                 style={{

@@ -67,6 +67,7 @@ const Pin = (props: PinProps) => {
             if (selected.type === pinObject.type) {
                 console.log("Cannot connect similar pins.");
             } else {
+                console.log("ELSE", pinObject)
                 if (pinObject.type === "in" && !pinObject.ref) {
                     // add selected id to current ref
                     dispatch({

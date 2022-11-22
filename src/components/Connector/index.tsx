@@ -45,11 +45,9 @@ const Connector = (props: ConnectorProps) => {
         <>
             <path
                 className={selected ? "connector selected" : "connector"}
-                d={`M ${props.from.position.x + 5} ${props.from.position.y} C ${
-                    props.to.position.x
-                } ${props.from.position.y} ${props.from.position.x} ${
-                    props.to.position.y
-                } ${props.to.position.x - 5} ${props.to.position.y}`}
+                d={`M ${props.from.position.x + 5} ${props.from.position.y} C ${props.to.position.x
+                    } ${props.from.position.y} ${props.from.position.x} ${props.to.position.y
+                    } ${props.to.position.x - 5} ${props.to.position.y}`}
                 stroke="#45526C"
                 strokeWidth="1.5"
                 fill="none"
@@ -73,24 +71,6 @@ const Connector = (props: ConnectorProps) => {
             )}
         </>
     );
-};
-
-const getColor = (id: string) => {
-    const colors = localStorage.getItem("colors");
-    if (colors) {
-        const colorMap: { [id: string]: string } = JSON.parse(colors);
-        if (colorMap[id]) return colorMap[id];
-        else {
-            colorMap[id] = `hsl(${Math.floor(Math.random() * 360)}, 100%, 40%)`;
-            localStorage.setItem("colors", JSON.stringify(colorMap));
-            return colorMap[id];
-        }
-    } else {
-        let colorMap: { [id: string]: string } = {};
-        colorMap[id] = `hsl(${Math.floor(Math.random() * 360)}, 100%, 40%)`;
-        localStorage.setItem("colors", JSON.stringify(colorMap));
-        return colorMap[id];
-    }
 };
 
 export default Connector;

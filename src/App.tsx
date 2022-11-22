@@ -9,15 +9,13 @@ import {
     Redirect,
 } from "react-router-dom";
 
-import LandingPage from "./modules/LandingPage";
 import Home from "./modules/Home";
 import HeaderModule from "./components/Header";
 
 const App: React.FC = () => {
-    const storedState = localStorage.getItem("store_state");
     const [state, dispatch] = React.useReducer(
         main,
-        (storedState && JSON.parse(storedState)) || initialState
+        initialState
     );
     return (
         <div className="App">

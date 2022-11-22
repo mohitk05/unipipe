@@ -1,6 +1,8 @@
 import { getProcessor } from "./processor";
 import { NodeType } from "../context/main";
 import { ElementResponseStructure } from "../components/ElementList";
+import { ref, child, get } from "firebase/database";
+import { database } from "./firebase";
 
 export type ElementType = {
     id: string;
@@ -19,12 +21,12 @@ type PinMapping = {
 };
 
 type InputOutput = {
-    inputs: {
+    inputs?: {
         type: "in";
         name: string;
         label: string;
     }[];
-    outputs: {
+    outputs?: {
         type: "out";
         label: string;
         name: string;
@@ -425,25 +427,34 @@ export const saveElements = (
     return modified;
 };
 
-export const getAllElements = async (): Promise<{
-    [id: string]: ElementType;
-}> => {
-    const elements = localStorage.getItem("elements");
-    if (elements) {
-        return Promise.resolve(JSON.parse(elements));
-    } else {
-        let modified = saveElements(sampleElements);
-        return modified;
-    }
+let allElements: Promise<Record<string, ElementType>>;
+export const getAllElements = async (): Promise<
+    Record<string, ElementType>
+> => {
+    if (allElements) return await allElements;
+    return (allElements = new Promise((res, rej) => {
+        get(child(ref(database), "elements"))
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    res(snapshot.val());
+                } else {
+                    console.log("No elements found");
+                    res({});
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                rej(err);
+            });
+    }));
 };
 
 export const getElement = async (type: string): Promise<ElementType> => {
-    const elements = localStorage.getItem("elements");
-    if (elements) {
-        return JSON.parse(elements)[type];
+    if (allElements) {
+        return (await allElements)[type];
     } else {
-        let allElements = await getAllElements();
-        return allElements[type];
+        const elems = await getAllElements();
+        return elems[type];
     }
 };
 

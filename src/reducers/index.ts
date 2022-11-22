@@ -33,10 +33,14 @@ export const boardReducer = (state: BoardState, action: BoardActions) => {
             stateClone.inputPins &&
                 (stateClone.inputPins[action.data.input].ref =
                     action.data.output);
-            stateClone.outputPins &&
-                stateClone.outputPins[action.data.output].refs.push(
+            if (stateClone.outputPins) {
+                if (!stateClone.outputPins[action.data.output].refs) {
+                    stateClone.outputPins[action.data.output].refs = [];
+                }
+                stateClone.outputPins[action.data.output].refs?.push(
                     action.data.input
                 );
+            }
             return stateClone;
         case "DISCONNECT_PINS":
             stateClone = cloneDeep(state);
@@ -44,12 +48,12 @@ export const boardReducer = (state: BoardState, action: BoardActions) => {
                 (stateClone.inputPins[action.data.input].ref = null);
             tempIndex =
                 stateClone.outputPins &&
-                stateClone.outputPins[action.data.output].refs.findIndex(
+                stateClone.outputPins[action.data.output].refs?.findIndex(
                     (ref: string) => ref === action.data.input
                 );
             if (tempIndex !== undefined && tempIndex > -1) {
                 stateClone.outputPins &&
-                    stateClone.outputPins[action.data.output].refs.splice(
+                    stateClone.outputPins[action.data.output].refs?.splice(
                         tempIndex,
                         1
                     );
@@ -136,8 +140,6 @@ export const main = (state: StoreStateType, action: BoardActions) => {
     const newState = {
         board: boardReducer(state.board, action),
     };
-
-    localStorage.setItem("store_state", JSON.stringify(newState));
 
     return newState;
 };

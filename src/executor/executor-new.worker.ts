@@ -90,19 +90,21 @@ class ExecutorNode {
                     },
                 });
                 res(data);
-            } catch (e) {
-                rej(
-                    `Error executing node - ${
-                        globalElements[this.node.type].type
-                    } (${this.node.id}). Message: ${e.message}`
-                );
-                ctx.postMessage({
-                    type: "update_node",
-                    node: this.node.id,
-                    update: {
-                        status: 3,
-                    },
-                });
+            } catch (e: unknown) {
+                if (e instanceof Error) {
+                    rej(
+                        `Error executing node - ${
+                            globalElements[this.node.type].type
+                        } (${this.node.id}). Message: ${e.message}`
+                    );
+                    ctx.postMessage({
+                        type: "update_node",
+                        node: this.node.id,
+                        update: {
+                            status: 3,
+                        },
+                    });
+                }
             } finally {
                 this.isWaiting = false;
             }
@@ -132,7 +134,7 @@ const execute = (
         const currentNode = nodeMap[current];
         const inputs = currentNode.getNode().inputs;
         let inputPromises: Promise<any>[] = [];
-        inputs.forEach((input) => {
+        inputs?.forEach((input) => {
             const inputPin = inputPins[input];
             if (inputPin.ref) {
                 const inputRefPin = outputPins[inputPin.ref];
@@ -180,7 +182,7 @@ const execute = (
                             let nextNodes: {
                                 [id: string]: 1 | undefined;
                             } = {};
-                            outPinRefs.forEach((oRef) => {
+                            outPinRefs?.forEach((oRef) => {
                                 const nextNode = inputPins[oRef].node;
                                 if (!nextNodes[nextNode]) {
                                     executeRecursive(nextNode);
@@ -189,11 +191,11 @@ const execute = (
                             });
                         };
                         if (
-                            currentNode.getNode().outputs.length &&
+                            currentNode.getNode().outputs?.length &&
                             !["sink", "conditional"].includes(
                                 globalElements[currentNode.getNode().type].type
                             ) &&
-                            currentNode.getNode().outputs.length
+                            currentNode.getNode().outputs?.length
                         ) {
                             currentNode
                                 .getNode()
@@ -237,7 +239,7 @@ const findHeadNode = (
         nodeMap[node.id] = node;
     });
     const nodesWithoutInputs = nodes.filter((node: NodeType) => {
-        return !node.inputs.length;
+        return !node.inputs?.length;
     });
 
     const headNodes = nodesWithoutInputs.filter((node: NodeType) => {
@@ -245,7 +247,7 @@ const findHeadNode = (
         node.outputs.forEach((out) => {
             if (pass) {
                 let outPin = outputPins[out];
-                outPin.refs.forEach((ref) => {
+                outPin.refs?.forEach((ref) => {
                     if (pass) {
                         let refInputPin = inputPins[ref];
                         let refNode: NodeType = nodeMap[refInputPin.node];
